@@ -1,645 +1,443 @@
 ---
-title: Hermes Agent 架构图解 —— 我的 AI 助手是怎么"住"在我电脑里的
-description: 拆解 ~/.hermes/ 目录的 6 大类组件、记忆机制、技能系统、Cookie 抓取栈，全程用 mermaid 流程图。
-date: 2026-05-14
+title: Hermes Agent 架构图解 —— 一个会自己进化的 AI 助手是怎么"活"在我电脑里的
+description: 基于 Akshay Pachaar 的 Hermes Masterclass 重读 Hermes 架构——SOUL 身份层、三层记忆、自演化 Skills、Curator、GEPA、Profiles 多 Agent。我的批注与判断。
+date: 2026-05-15
 tags:
   - hermes-agent
   - 架构
   - AI Agent
   - 技术笔记
+  - 读文沉淀
 ---
 
 # 🏛️ Hermes Agent 架构图解
 
-> 一句话定位：**Hermes 不是一个聊天框，它是一个有持久记忆、跨平台触手、可定时跑、能自学技能的"AI 个人秘书"——而它整个人就活在 `~/.hermes/` 这一个目录里。**
+!!! quote "原文出处"
+    **来源**：Akshay Pachaar（@akshay_pachaar）— *Hermes Agent Masterclass*（X Article, 2026-05-13, 2.2M 阅读）
+    **读于**：2026-05-15
+    **作者**：BITS Pilani 出身，Daily Dose of DS 联合创始人，前 LightningAI AI 工程师。这是他写的 Hermes 系统化教程。
 
-!!! abstract "为什么写这篇"
-    用了 Hermes 一段时间后，我意识到它和 ChatGPT 那种"打开网页问几句"的工具是完全不同的物种——它有**持久记忆**、有**自动化定时任务**、能**调真实工具**（看我电脑、跑命令、调浏览器）、还会**自己积累技能**。我想搞清楚它每次回答我之前都"看到了什么"、"做了什么"，于是把整个 `~/.hermes/` 目录拆开分析了一遍，得到这篇图解。
+> 一句话定位：**Hermes 不是聊天框，也不只是带记忆的 Agent——它是个把"运行时学习 + 多层记忆 + 离线权重优化"三件事打包在一个框架里的、会自己进化的系统。开源 Agent 里目前没第二家这么干的。**
 
 ---
 
-## 📦 整体鸟瞰图
+## 🧭 为什么重写这篇
 
-整个 Hermes 在我机器上就活在 `~/.hermes/` 这一个目录里，按职责拆成 **6 大类**——先用一张组件墙看清边界：
+我之前在 garden 里写过一篇 Hermes 架构图解，是从 `~/.hermes/` 目录的物理结构入手，画 6 大类组件墙。那篇的问题在于：**只看到了"住在哪"，没看到"为什么这么设计"。**
 
-<div class="grid cards" markdown>
+读完 Akshay 这篇 Masterclass 我意识到几个关键概念之前完全漏掉了：
 
--   :material-cog-outline:{ .lg .middle } __配置层__
+- **SOUL.md** —— system prompt slot #1，比记忆更上游的身份层
+- **三层记忆**（不是两层）—— Tier 1 即时上下文 + Tier 2 SQLite FTS5 + Tier 3 八个外挂记忆插件
+- **Skills 渐进式披露** —— Level 0 catalog → Level 1 SKILL.md → Level 2 references
+- **Curator** —— 后台维护进程，"7 天没跑 + 2 小时空闲"才触发，不是 cron
+- **GEPA** —— ICLR 2026 Oral，独立仓库的离线进化优化器，$2-10 一轮
+- **Profiles** —— 一台机器同时跑多个完全隔离的 Agent
 
-    ---
+这篇是按 Akshay 的逻辑重组，但**保留我自己的判断和批注**——他给的是教程视角，我加的是"实际用了一段时间后的感受 + 哪些坑他没提"。
 
-    `config.yaml` 决定模型/Provider/工具开关；`.env` 装秘钥。**两文件强分离**——一份能 git，一份永远私密。
+---
 
-    [:octicons-arrow-right-24: 跳到配置层](#1-hermes)
+## 🎯 它到底解决什么问题
 
--   :material-brain:{ .lg .middle } __记忆层__
+每一个你用过的 AI Agent 都有同一个毛病：**会话一关就什么都忘了。**
 
-    ---
+你纠正过它三次的项目约定、它昨天花十分钟调通的那个 fix、你的代码风格偏好——下一次开新会话，全部归零，从头来过。这不是一个"用得久就更顺手"的工具，这是一个永远停留在第一天的工具。
 
-    `memories/MEMORY.md` 每 turn 全量注入 system prompt；`sessions/*.jsonl` 是可搜索的"长期外存"。
+Hermes 的差异化在于它**自带一个学习闭环**：
 
-    [:octicons-arrow-right-24: 跳到记忆层](#2)
+1. **跨会话记忆**（持久化到磁盘）
+2. **自己写可复用的 Skill**（程序性记忆）
+3. **后台清理**（Curator 自动整理过期/重复的 Skill）
+4. **离线进化验证**（GEPA 用执行 trace 反过来优化 Skill）
 
--   :material-tools:{ .lg .middle } __能力层__
+这四件事单独看都不算新，但**打包在一个开源框架里、还能跑在自己机器上**——目前确实只有 Hermes 一家。最接近的对手 OpenClaw 也只有持久化和消息网关，没有自演化和离线优化。
 
-    ---
+!!! tip "Kilo blog 上的一句话总结"
+    *"Hermes packages a gateway around a learning agent. OpenClaw packages an agent around a messaging gateway."*
+    **Hermes 是「学习型 Agent」外面包一层网关；OpenClaw 是「消息网关」里面塞一个 Agent。** 出发点完全相反。
 
-    Skills = 程序性记忆。**用的时候按需加载，用完发现坑就自己 patch SKILL.md**——会越用越懂你。
+---
 
-    [:octicons-arrow-right-24: 跳到能力层](#3-skills)
+## 🏗️ 它怎么搭起来的
 
--   :material-key-variant:{ .lg .middle } __凭据层__
+要理解后面的"学习闭环"，得先看 Hermes 的物理骨架。
 
-    ---
-
-    `cookies/{x,xiaohongshu}.json` chmod 600。绕开 OAuth 直接用浏览器登录态调真实平台。
-
-    [:octicons-arrow-right-24: 跳到凭据层](#4-cookie)
-
--   :material-clock-outline:{ .lg .middle } __自动化层__
-
-    ---
-
-    `cron/jobs.json` + Gateway。每天 21:00 EDT 自动抓 Karpathy 推文整理日报推到飞书。
-
-    [:octicons-arrow-right-24: 跳到自动化层](#5-cron)
-
--   :material-folder-multiple-outline:{ .lg .middle } __运行时层__
-
-    ---
-
-    `logs/` + `cache/`。所有 LLM 调用、tool call、错误堆栈都落盘——可 grep、可 git diff。
-
-</div>
-
-下面这张图把上面 6 块的协作关系和数据流画出来：
+整个系统的核心是一个 `AIAgent` 类，住在 `run_agent.py` 这一个脚本里。CLI、消息网关、批量任务跑批、IDE 集成——所有入口最终都汇到这同一个 Agent。**这就是它"平台无关"叙事真正能成立的地方**：换 IDE、换聊天软件、换运行模式，跑的是同一份代码，只是入口换了。
 
 ```mermaid
 graph TB
-    subgraph Hermes["🌳 ~/.hermes/"]
-        A["📋 配置层<br/>config.yaml + .env"]
-        B["🧠 记忆层<br/>memories/ + sessions/"]
-        C["🛠️ 能力层<br/>skills/ + hermes-agent/"]
-        D["🔐 凭据层<br/>cookies/ + auth.json"]
-        E["⏰ 自动化<br/>cron/jobs.json"]
-        F["📊 运行时<br/>logs/ + cache/"]
+    subgraph entries["📥 入口层（多平台）"]
+        CLI[hermes CLI]
+        MSG[飞书 / Telegram / Discord]
+        IDE[IDE 集成]
+        CRON[定时任务]
     end
 
-    User[👤 我] -->|发消息| Gateway[🌐 Gateway<br/>Feishu / Telegram / CLI]
-    Gateway --> Brain[🤖 Hermes Agent 主进程]
-    Brain --> A
-    Brain --> B
-    Brain --> C
-    Brain --> D
-    Brain --> E
-    Brain --> F
+    AGENT["🧠 AIAgent (run_agent.py)<br/>统一核心"]
 
-    Brain -->|调用| LLM[(🧠 LLM<br/>Claude Opus 4.7<br/>via Bedrock)]
-    LLM -->|tool_calls| Brain
+    entries --> AGENT
 
-    classDef cfg fill:#e3f2fd,stroke:#1976d2
-    classDef mem fill:#f3e5f5,stroke:#7b1fa2
-    classDef skill fill:#e8f5e9,stroke:#388e3c
-    classDef cred fill:#fff3e0,stroke:#f57c00
-    classDef cron fill:#fce4ec,stroke:#c2185b
-    classDef rt fill:#f5f5f5,stroke:#616161
+    subgraph loop["🔁 ReAct 循环（同步）"]
+        BUILD["1. Build system prompt<br/>SOUL + Memory + Skills catalog"]
+        COMPRESS["2. 检查是否需要压缩"]
+        CALL["3. 可中断的 API 调用"]
+        TOOLS["4. 执行 tool calls"]
+        BUILD --> COMPRESS --> CALL --> TOOLS --> BUILD
+    end
 
-    class A cfg
-    class B mem
-    class C skill
-    class D cred
-    class E cron
-    class F rt
+    AGENT --> loop
+
+    subgraph backends["🚀 6 种执行后端（同代码不同 config）"]
+        LOCAL[本地终端]
+        DOCKER[Docker]
+        SSH[SSH 远程]
+        MODAL[Modal]
+        DAYTONA[Daytona]
+        SING[Singularity]
+    end
+
+    loop --> backends
+
+    style AGENT fill:#3a7a3a,stroke:#fff,color:#fff
+    style loop fill:#2a4a6a,stroke:#fff,color:#fff
 ```
 
-每次你给 Hermes 发一条消息，它都要"经过"上面这些层——**配置告诉它你是谁、用哪个 LLM；记忆告诉它你的习惯和过去聊过什么；能力告诉它能做什么；凭据让它能调你授权过的服务**。
+几个**之后会反复用到的细节**：
+
+- **6 种执行后端**：本地 / Docker / SSH / Modal / Daytona / Singularity。**同一份 Agent 代码，改 config 就能从笔记本切到云 GPU 服务器**，业务代码不用动一行。这是大多数 Agent 框架做不到的——它们要么硬编码本地，要么硬编码容器。
+- **几乎兼容所有模型**：内部有一个 translation 层，把任意 provider 收敛到三种 API 格式之一。所以 Claude → GPT → Gemini → 本地 Ollama 一条命令切换，上层完全无感。
+- **90 turns 硬上限**：每个任务最多 90 轮 ReAct 循环。没这个限制的话，一个卡在循环里反复重试同一个失败 API 的 Agent 能在你睡觉时把 credits 烧光。**Subagents 共享同一个 turn 预算**——递归 delegate 也跑不出去。
+
+!!! abstract "我的批注：90 turns 这件事"
+    我自己被这个上限救过两次。一次是某个 skill 写的命令把 stderr 重定向丢了，Agent 一直以为还没成功，重试了几十轮才被截断。如果没这个上限，那次可能要烧好几刀。**这个机制的重点不是"上限多大"而是"有上限"——任何长跑 Agent 框架没这个就不能用。**
 
 ---
 
-## 🧬 一次对话的生命周期
+## 👤 SOUL.md —— 记忆之前的"身份层"
 
-先看一次对话从你发消息到看到回复，**Hermes 内部到底发生了什么**：
+读 Akshay 这篇之前，我以为 Hermes 的最上游是 `MEMORY.md` + `USER.md` 那两个文件。错了。**slot #1 是 SOUL.md**，比记忆更前面。
 
-```mermaid
-sequenceDiagram
-    autonumber
-    participant U as 👤 我
-    participant G as 🌐 Gateway<br/>(Feishu)
-    participant H as 🤖 Hermes Agent
-    participant M as 🧠 Memory<br/>(MEMORY.md + USER.md)
-    participant S as 📚 Skills<br/>(~/.hermes/skills/)
-    participant L as 🔮 LLM<br/>(Claude Opus 4.7)
-    participant T as 🛠️ Tools<br/>(terminal/file/web/...)
+Memory 是 Agent **知道什么**，Skills 是它**怎么做事**，但都没回答一个问题：**它出现的时候，是谁。**
 
-    U->>G: "帮我搜 karpathy 的推文"
-    G->>H: 转发消息 + 用户身份
-    H->>M: 加载 MEMORY.md + USER.md
-    H->>S: 扫描 SKILL.md frontmatter
-    H->>L: System prompt = 配置 + 记忆 + skill 索引<br/>+ 历史对话 + 当前消息
-    L-->>H: tool_call: skill_view("x-cookie-scraping")
-    H->>S: 加载完整 skill 内容
-    H->>L: 把 skill 内容塞回 context
-    L-->>H: tool_call: terminal("xsearch karpathy")
-    H->>T: 真实跑 shell 命令
-    T-->>H: 推文 JSON
-    H->>L: 把 JSON 塞回 context
-    L-->>H: 最终回复（Markdown）
-    H->>G: 回复
-    G->>U: 渲染并发送
+没有身份层的话，每个 Agent 都像同一个 Agent 戴了不同的帽子——同一种语气、同一种回答风格，只是工具集换了。SOUL.md 解决的就是这件事：
+
+```markdown
+# SOUL.md
+You are a pragmatic senior engineer with strong taste.
+You optimize for truth, clarity, and usefulness
+over politeness theater.
 ```
 
-!!! tip "关键洞察"
-    **每次对话开始时，整个 `MEMORY.md` 和 `USER.md` 文件都被原文塞进 LLM 的 system prompt**——这就是为什么记忆容量很小（2K-2.2K 字符上限）但效果显著：它不是"我去查记忆"，而是 LLM 每次都"已经知道了"。所以记忆里写的东西要**精炼、稳定、跨会话有用**。
+它住在 `~/.hermes/SOUL.md`，**system prompt 第一行**，比 memory、比 skills catalog 都早。手写、静态、跨会话不变。文件不存在的话 fallback 到一个内置默认人设。
+
+为什么这件事对自演化叙事重要？因为**后面所有动作——Agent 写的 memory、它创建的 skill、它怎么整理已有知识——都是在这个身份的视角下发生的**。SOUL 是一个固定的取景框，Memory 和 Skills 是框里的活动部件。换 SOUL，整套人设、判断口径、措辞风格全跟着换。
+
+> **我的批注**：之前我用 Hermes 一直没动 SOUL.md，所以默认人设是个不痛不痒的"helpful assistant"。读完这篇后我把 SOUL 改成了"刻薄但准确的同事"——同样问 "我这个 mkdocs build 为什么挂了"，回答从"让我们一起来排查一下吧 😊"变成"你 strict mode 没开吧，开了第一个 broken link 就该红了"。**这一个文件改完，下游所有 Skills 自动跟着换调子，因为它们读的就是这个新 SOUL。** 这种杠杆很少见。
 
 ---
 
-## 1️⃣ 配置层 —— Hermes 的"身份证"
+## 🧠 三层记忆系统 —— 三种速度，三种用途
+
+Hermes 没有"一个记忆"，它有**三层**，各自服务不同的诉求。
 
 ```mermaid
 graph LR
-    subgraph CFG["📋 配置层"]
-        Config[config.yaml<br/>11.6 KB]
-        Env[.env<br/>24 KB]
-        Auth[auth.json<br/>OAuth tokens]
-        Channel[channel_directory.json<br/>已连平台清单]
-        Backup[config.yaml.bak.*<br/>每次改自动备份]
+    subgraph T1["⚡ Tier 1：即时上下文（每 turn 注入）"]
+        MEM["MEMORY.md<br/>最多 2200 字符<br/>环境/约定/教训"]
+        USR["USER.md<br/>最多 1375 字符<br/>用户画像"]
     end
 
-    Config --> |"模型路由"| ModelChoice{当前模型}
-    ModelChoice --> Bedrock[Claude Opus 4.7<br/>via AWS Bedrock]
-    ModelChoice --> Other[OR OpenRouter / DeepSeek<br/>/ Gemini / 本地模型]
+    subgraph T2["🔍 Tier 2：会话历史（按需检索）"]
+        SQL["SQLite + FTS5<br/>每条对话全文索引<br/>session_search 召回"]
+    end
 
-    Env --> |"读取"| ApiKeys[各种 API Key<br/>OPENAI / ANTHROPIC<br/>BEDROCK / EXA / ...]
+    subgraph T3["🧩 Tier 3：外挂记忆（可选插件）"]
+        EXT["8 个 provider 插件<br/>同时只能开一个<br/>自动 prefetch / sync / extract"]
+    end
 
-    Channel --> Feishu[Feishu]
-    Channel --> Discord[Discord]
-    Channel --> Telegram[Telegram]
+    SYS[System Prompt] -.总在.-> T1
+    SYS -.调用 tool.-> T2
+    SYS -.插件 hook.-> T3
 
-    classDef file fill:#e3f2fd,stroke:#1976d2
-    class Config,Env,Auth,Channel,Backup file
+    style T1 fill:#2a4a6a,stroke:#fff,color:#fff
+    style T2 fill:#3a4a3a,stroke:#fff,color:#fff
+    style T3 fill:#4a3a3a,stroke:#fff,color:#fff
 ```
 
-| 文件 | 是什么 | 改它要重启吗 |
-|---|---|---|
-| `config.yaml` | 主配置（模型、provider、工具、技能、压缩阈值） | 大部分要 `/reset` 或重启 |
-| `.env` | 所有 API Key 和 secret | `/reload` 或重启 |
-| `auth.json` | OAuth token（飞书 access_token 等） | 自动刷新 |
-| `channel_directory.json` | 已连接的聊天平台清单 | gateway 重启 |
-| `config.yaml.bak.*` | 每次改 config 都自动备份一份 | 用于回滚 |
+**Tier 1：两个超小的 Markdown 文件。**
 
-!!! tip "配置和秘密分两个文件"
-    是为了你能随便 `git push` config.yaml 同步设置，但 `.env` 永远在 `.gitignore` 里。
+- `MEMORY.md`（≤ 2200 字符）—— Agent 自己的笔记本：环境信息、项目约定、工具坑、踩过的教训
+- `USER.md`（≤ 1375 字符）—— 用户画像：名字、沟通偏好、技术水平、雷区
+
+两个文件**会话开始时一次性快照注入 system prompt**，之后这个会话内不再变。Agent 中途写了新 entry，落盘是即时的，但要**下个会话**才会出现在 prompt 里。容量到 ~80% 时（system prompt 头部会显示百分比），Agent 必须做整合——把相关条目合并成更密集的版本，**留密度高的，淘密度低的**。
+
+> **我的批注：为什么这俩这么小？** Akshay 没明说，但我体感是——**这层是"必须每 turn 都看到"的内容，token 成本是乘法**。Memory 多 1KB，每 turn 多 1KB，跑一万 turn 就多 10MB context fee。所以这层故意做小、强迫凝练。我 MEMORY.md 现在写到 77% 已经塞了 5 条核心约定，再多就得合并了。
+
+**Tier 2：SQLite + 全文索引。**
+
+每一条对话（CLI、消息平台都包括）都进 SQLite，FTS5 索引。Agent 想找几周前的对话，调一下 `session_search`，返回 LLM 总结过的命中片段。
+
+权衡很清楚：**Tier 1 永远在场但很小，Tier 2 容量无限但要主动召回 + LLM 二次总结**。关键事实进 memory，其它的就在搜索里躺着，需要的时候才喊出来。
+
+**Tier 3：8 个外挂记忆插件。**
+
+如果嫌前两层不够，Hermes 内置了 8 个可插拔的 provider（Mem0、Letta、ZEP 之类），同时只能启用一个，**不替换内置记忆而是叠加**。一旦启用：
+
+- 每个 turn 之前自动 prefetch 相关记忆
+- 每条回复之后自动 sync 当前对话
+- 会话结束自动抽取新记忆
+
+> **我的批注：第三层我一直没开。** 前两层加起来对我来说够用了——Tier 1 装 5 条核心约定，Tier 2 配 session_search 找老对话，覆盖了 95% 场景。Tier 3 的价值场景应该是**"跨用户/跨 Agent 共享的语义记忆库"**，比如你想让多个 Agent 共用一份"客户偏好"知识，那时候才上专门的 vector store。单人单机不需要。
+
 
 ---
 
-## 2️⃣ 记忆层 —— 跨会话的"共同体记忆"
+## 🛠️ 自演化 Skills —— Agent 自己写自己的 playbook
 
-这是 Hermes 和"普通 LLM 聊天"最大的区别。每次对话**都不是从零开始的**：
+Memory 管事实，**Skills 管步骤**——它是 Agent 的程序性记忆。
 
-```mermaid
-graph TB
-    subgraph MEM["🧠 记忆层"]
-        direction TB
-        MMD["MEMORY.md<br/>2.2K 上限<br/>当前 66%"]
-        UMD["USER.md<br/>1.4K 上限<br/>当前 70%"]
-        SDIR["sessions/<br/>每次对话的完整 transcript<br/>共 45 个 JSON"]
-    end
+每个 Skill 都是带 YAML frontmatter 的 Markdown 文件：
 
-    NewMsg["📩 你发新消息"] --> Inject
+```markdown
+---
+name: k8s-pod-debug
+description: >
+  Activate for crashing pods, CrashLoopBackOff,
+  "why is my pod restarting", container failures.
+version: 1.2.0
+author: agent
+platforms: [linux, macos]
+---
 
-    subgraph Inject["每个 turn 都做的事"]
-        direction TB
-        Step1["1. 读 MEMORY.md 全文"] --> Step2["2. 读 USER.md 全文"]
-        Step2 --> Step3["3. 拼成 system prompt"]
-        Step3 --> Step4["4. 发给 LLM"]
-    end
+## Procedure
+1. Get pod status → check events → pull logs
+2. Look for OOMKilled, ImagePullBackOff, config errors
 
-    MMD -->|原文注入| Inject
-    UMD -->|原文注入| Inject
+## Pitfalls
+- Forgetting --previous flag on restarted containers
 
-    SDIR -->|按需检索| SS["session_search 工具<br/>SQLite FTS5 全文检索"]
-    SS -->|找到相关历史| Inject
-
-    classDef mem fill:#f3e5f5,stroke:#7b1fa2
-    classDef inj fill:#fff8e1,stroke:#f57c00
-    class MMD,UMD,SDIR mem
-    class Step1,Step2,Step3,Step4,SS inj
+## Verification
+- Pod stays Running with 0 restarts for 5+ minutes
 ```
 
-### 两类记忆，分工明确
+### 🪜 三级渐进式披露：让 token 成本不爆炸
 
-| 文件 | 内容 | 例子 |
-|---|---|---|
-| **MEMORY.md** | Hermes 自己的工作笔记 | 「主机是无图形界面 Linux」「web 抓取栈用 Exa + Jina」「cookie 都在 ~/.hermes/cookies/」 |
-| **USER.md** | 关于用户（我）的画像 | 「飞书移动端不渲染 Markdown 表格」「中文交流」「讨厌方案对比让你选」 |
-
-### 容量设计的取舍
+Skills 数量一上去（我现在有 87 个内置 + 10 几个自创），全塞进 system prompt 显然不现实。Hermes 的解法是**三级懒加载**：
 
 ```mermaid
 graph LR
-    A["容量小<br/>2K 字符"] --> B["每次都全量注入<br/>不需要检索"]
-    B --> C["LLM 一上来就<br/>'已经知道了'"]
-    C --> D["响应快<br/>不需要 RAG"]
-
-    A -.- A2["⚠️ 必须精炼<br/>过时信息要清理"]
-    A2 --> A3["Hermes 主动<br/>合并/淘汰旧条目"]
+    L0["🟢 Level 0<br/>名字 + 一行描述<br/>~3K tokens 全 catalog<br/>每 turn 都在"]
+    L1["🟡 Level 1<br/>完整 SKILL.md<br/>真正用时才加载"]
+    L2["🔴 Level 2<br/>references / 子文件<br/>需要细节再打开"]
+    L0 -->|skill_view| L1
+    L1 -->|file_path 参数| L2
+    style L0 fill:#2a4a3a,stroke:#fff,color:#fff
+    style L1 fill:#4a4a2a,stroke:#fff,color:#fff
+    style L2 fill:#4a3a3a,stroke:#fff,color:#fff
 ```
 
-记忆容量小是**有意为之**——这样可以保证整段塞进每次的 system prompt，LLM 不需要"决定要不要查记忆"，记忆**永远是激活的**。代价是必须保持精简，所以我（Hermes）会主动建议合并冗余条目。
+**只有 Level 0 是常驻成本**（约 3K tokens 装下整个 skills catalog 的 name + description）。Agent 看到任务匹配某个 skill description 时，主动 `skill_view(name)` 拉 Level 1。如果 Level 1 还不够（比如要看具体脚本），再拉 Level 2。
 
-### Sessions 是"长期外存"
+**这个分层是 Skills 系统能 scale 到上百个的根本原因**——否则光 prompt context 就装不下。
+
+### 🔁 自演化的核心闭环
+
+这是 Hermes 真正不一样的地方。**Agent 用 `skill_manage` 工具自己创建 Skill**，不需要你手写。触发条件：
+
+1. 完成一个复杂任务（≥ 5 个 tool calls）
+2. 撞墙后找到工作路径
+3. 用户纠正了它的方法
+4. 发现一个非平凡的工作流
+
+闭环是这样的：
 
 ```mermaid
 graph LR
-    Sessions["sessions/<br/>📂 45 个对话 JSON<br/>共 7.8 MB"]
-    FTS["SQLite FTS5<br/>全文索引"]
-    Tool["session_search<br/>工具"]
+    A[遇到问题] --> B[试错解决]
+    B --> C{成功?}
+    C -->|是| D[skill_manage create<br/>存成 SKILL.md]
+    C -->|失败| B
+    D --> E[下次类似问题]
+    E --> F[skill_view 加载]
+    F --> G[直接照流程跑<br/>不用重新探索]
+    G --> H{发现遗漏/错?}
+    H -->|是| I[skill_manage patch<br/>就地修正]
+    H -->|否| 完成
+    I --> 完成
 
-    Sessions --> FTS
-    FTS --> Tool
-
-    Q["「上次我问过 X 没？」"] -->|关键词| Tool
-    Tool -->|找到匹配| Result["相关历史片段<br/>注入当前 context"]
+    style D fill:#3a7a3a,stroke:#fff,color:#fff
+    style I fill:#7a5a3a,stroke:#fff,color:#fff
 ```
 
-记忆是"现在还要用的事实"，sessions 是"以前聊过的所有内容"。当我说「上次咱们怎么解决 Y 的来着？」，Hermes 会调用 `session_search` 工具，从 SQLite 里全文检索，把找到的片段注入到当前对话的 context 里。
+`skill_manage` 支持 6 个动作：**create**（新建）、**patch**（targeted 修改，token 最省，优先用）、**edit**（整篇重写）、**delete**、**write_file**、**remove_file**。
+
+> **我的批注：patch 的优先级很重要。** 一个我亲眼见过的反模式：Agent 用 edit 把一个 100 行 skill 整个重写，就为了改 1 行 pitfall——纯纯烧 token。Hermes 在系统 prompt 里**反复强调 patch 优先**，是因为它知道 Agent 默认偏好"完整重写"（更省脑子）。这是个工具链层面对 Agent 的纠偏。
+
+### 🧹 Curator —— Skills 的垃圾回收
+
+不维护的话，Agent 自创的 Skills 会堆成一座山——**几十个窄而重叠的 playbook 互相吃 token、污染 catalog**。
+
+Curator 是**后台维护进程**，但它不是 cron，是 **inactivity check**：
+
+- 距上次跑 ≥ 7 天 **且** Agent 已闲置 ≥ 2 小时 → 触发
+- fork 一个 Agent 出来跑，**自带独立 prompt cache，不碰当前会话**
+
+它分两个阶段：
+
+1. **自动迁移**（确定性、不调 LLM）：30 天没用 → 标 stale；90 天没用 → 归档到 `skills/.archive/`
+2. **LLM 复盘**（最多 8 轮迭代）：fork 出的 Agent 巡视所有 agent-authored skills，决定每个是 keep / patch / consolidate / archive
+
+两条**硬约束**让我比较安心：
+
+- **Curator 永远不碰 bundled / hub 安装的 skills**，只动 agent 自创的
+- **永远不真删**，最坏只到 `.archive/`，一条命令就能恢
+
+每次 Curator 跑之前，**整个 skills 目录会先打 tar.gz 快照**。Rollback 是一条命令的事，rollback 本身也是可逆的。
+
+要保护某个关键 skill，`hermes curator pin <skill>` 就行——pin 之后归档/删除会被拒，但 patch / edit 还能进，**保留"可改不可丢"的语义**。
+
+> **我的批注：为什么是 inactivity 不是 cron？** 答案在 Akshay 后面那段藏着——**Agent 容易自我表扬**。如果 Curator 走 cron，每周固定跑，那它就是定期把 Agent 自己的"成果"再过一遍，Agent 大概率给自己打高分，**烂 skill 会被它自己保下来**。但走 inactivity 至少保证"用户已经离开、Agent 也没活干"才整理，避免在工作流热乎的时候搞坏东西。这个设计很克制。
+
 
 ---
 
-## 3️⃣ 能力层 —— Skills 系统（自学的"程序性记忆"）
+## 🧬 GEPA —— 离线进化优化器（这才是杀手锏）
 
-如果说记忆是"陈述性知识"（事实），**Skills 就是"程序性知识"（怎么做某事）**。这是 Hermes 最有意思的部分：
+Curator 解决了"清理"，但解决不了一个更根本的问题：**Agent 写的 Skill 真的好吗？**
+
+Akshay 在原文里讲得很直白：
+
+> *"The agent tends toward self-congratulation. It almost always thinks it performed well, even when it didn't."*
+
+**Agent 倾向自我表扬，几乎总觉得自己做得很好，即使根本没做好。** 同一套自动生成 Skill 的系统，也能用更差的版本覆盖你手工调好的 skill。这是个深层问题——你不能让被评价的人去当评委。
+
+GEPA 的解法是**让评委变成"执行 trace 本身"**。
+
+**GEPA = Genetic-Pareto Prompt Evolution。** 论文中了 ICLR 2026 Oral，MIT 协议开源，住在独立仓库 [`NousResearch/hermes-agent-self-evolution`](https://github.com/NousResearch/hermes-agent-self-evolution) ——**不在 Hermes 主 runtime 里**。
 
 ```mermaid
 graph TB
-    subgraph SKILLS["📚 ~/.hermes/skills/ (20+ 分类)"]
-        direction LR
-        S1["autonomous-ai-agents/"]
-        S2["creative/"]
-        S3["github/"]
-        S4["research/"]
-        S5["social-media/"]
-        S6["mlops/"]
-        S7["..."]
-    end
+    A[读取当前 SKILL.md] --> B[生成评测集]
+    B --> B1[Claude Opus 合成 case]
+    B --> B2[SQLite 真实历史]
+    B --> B3[人工 golden set]
 
-    subgraph S5_DETAIL["social-media/x-cookie-scraping/"]
-        SkillMD["SKILL.md<br/>YAML frontmatter +<br/>步骤 + 踩坑 + 验证"]
-        Refs["references/<br/>(可选) 详细文档"]
-        Templates["templates/<br/>(可选) 代码模板"]
-        Scripts["scripts/<br/>(可选) 辅助脚本"]
-    end
+    B1 --> C[GEPA 优化器]
+    B2 --> C
+    B3 --> C
 
-    S5 --> S5_DETAIL
+    C --> D[读 execution traces<br/>定位失败原因]
+    D --> E[进化搜索<br/>生成候选变体]
+    E --> F[LLM-as-judge<br/>rubric 打分非二元]
+    F --> G{通过约束门?}
 
-    Trigger["📩 用户问<br/>'帮我搜 X 上的 Y'"] --> Match{匹配 skill<br/>frontmatter}
-    Match -->|hit| Load[skill_view]
-    Load -->|加载完整 SKILL.md| Context["注入当前 context"]
-    Context --> Execute["按步骤执行<br/>terminal/file/...等工具"]
+    G -->|是<br/>测试 100% 过<br/>≤15KB<br/>缓存兼容<br/>语义不漂| H[最佳变体作为 PR<br/>提到 Hermes 主仓]
+    G -->|否| C
 
-    Execute --> Maintain{发现<br/>SKILL.md<br/>过时?}
-    Maintain -->|是| Patch["skill_manage<br/>action='patch'<br/>立刻修正"]
-    Maintain -->|否| Done["✅ 完成任务"]
-    Patch --> Done
-
-    classDef skill fill:#e8f5e9,stroke:#388e3c
-    classDef trigger fill:#fff8e1,stroke:#f57c00
-    class S1,S2,S3,S4,S5,S6,S7 skill
-    class Trigger,Match,Load,Context,Execute trigger
+    style C fill:#3a4a7a,stroke:#fff,color:#fff
+    style H fill:#3a7a3a,stroke:#fff,color:#fff
 ```
 
-### Skills 的关键创新：**自我维护**
+**关键不是"问 Agent 你做得好不好"，而是「读 trace、看哪步失败、靶向改」。** 候选变体走进化搜索（pareto 前沿），过 LLM rubric 打分（不是 pass/fail 而是多维分数），过四道约束门（全测试通过 / 不超 15KB / 缓存兼容 / 语义不漂移），最后**最优变体作为 PR 提交**——永远不直接 commit。
 
-```mermaid
-sequenceDiagram
-    autonumber
-    participant U as 用户
-    participant H as Hermes
-    participant Skill as SKILL.md
-    participant Tool as 工具
+**没 GPU。** 全部 API call 完成。**$2-10 一轮**。
 
-    U->>H: 跑某个任务
-    H->>Skill: 加载相关 skill
-    Skill-->>H: 步骤 1 → 2 → 3
-    H->>Tool: 执行步骤 1
-    Tool-->>H: ✅ OK
-    H->>Tool: 执行步骤 2
-    Tool-->>H: ❌ 报错 X
-    Note over H: 🤔 SKILL.md 没说会有这个错
-    H->>H: 自己研究修复
-    H->>Tool: 修复后重跑
-    Tool-->>H: ✅ OK
-    H->>Skill: skill_manage(patch)<br/>给步骤 2 加上「踩坑：X」
-    H->>U: 任务完成
-    Note over Skill: 下次别人遇到同样问题，<br/>SKILL.md 已经知道了
-```
-
-这就是为什么 Hermes 是 "self-improving"——**它每次踩坑都会修订 skill，让下次的自己（或别人）少走弯路**。
-
-### Skills vs Memory 的边界
-
-| | Memory | Skills |
-|---|---|---|
-| 内容类型 | 事实陈述 | 操作步骤 |
-| 容量 | 受限（2K） | 不限 |
-| 加载 | **每次自动注入** | **按需加载**（match 时） |
-| 例子 | "用户用中文" | "怎么用 cookie 抓 X 的推文" |
+> **我的批注：GEPA 跟 GRPO 的区别在哪？** Akshay 自己写过 [一篇专文](https://x.com/akshay_pachaar/status/1786925540810395988) 讲过：Berkeley 团队用 GEPA 比 GRPO 高 10 个点、少 35× rollout、零 GPU。**这是个对小作坊极友好的优化路径**——你不需要租 H100、不需要懂 RL，只要愿意花几刀 API、有评测集，就能让 skill 变好。
+>
+> **但我自己暂时没跑 GEPA。** 原因是我现在 Skills 都还在"探索阶段"——一个新 skill 写完，先用一段时间看它实际能 cover 多少 case，再考虑要不要进化。**没数据基础就跑 GEPA 是空转**——你的"评测集"只是几个虚构 case，进化方向就跟着虚构走了。GEPA 的最佳时机是某个 skill 你已经用了 50+ 次、积累了真实 trace，那时候让它去靶向修才有意义。
 
 ---
 
-## 4️⃣ 凭据层 —— Cookie 抓取栈（最近搭的）
+## 🎭 Profiles —— 一台机器同时养多个 Agent
 
-最近我让 Hermes 能去 X、小红书帮我搜内容，整套机制就活在凭据层：
+到这里整套架构（SOUL + Memory + Skills + Curator + GEPA）讲完了。但单个 Agent 玩到极致还是单个 Agent。**Hermes 真正"多就是好"的地方在 Profiles。**
 
-```mermaid
-graph TB
-    subgraph Mac["💻 我的 Mac"]
-        Browser["🌐 Chrome 浏览器<br/>已登录目标网站"]
-        Editor["🍪 Cookie-Editor<br/>扩展导出 JSON"]
-    end
+Profile 是 Hermes 的一等公民概念：**每个 profile 是一个完全隔离的 Hermes 实例**，自己的 config、memory、skills、sessions、SOUL，**默认互不共享**。
 
-    subgraph Server["🖥️ Linux Server (~/.hermes/)"]
-        subgraph Cookies["🔐 cookies/ (chmod 700)"]
-            XJ["x.json<br/>(auth_token + ct0)"]
-            XHS["xiaohongshu.json<br/>(web_session)"]
-        end
-
-        subgraph Tools["~/tools/ (venv 工具树)"]
-            XBOT["x-bot/<br/>playwright + chromium"]
-            XHSBOT["xhs-bot/<br/>xhs SDK + stealth.min.js"]
-        end
-
-        subgraph Bin["~/.local/bin/"]
-            XSEARCH["xsearch CLI"]
-        end
-
-        subgraph Skill["skills/social-media/"]
-            S1["x-cookie-scraping/SKILL.md"]
-            S2["xhs cookie skill"]
-        end
-    end
-
-    Browser --> Editor
-    Editor -.->|"复制 JSON"| Server
-
-    Cookies -.->|"权限 600<br/>永不进 LLM context"| XBOT
-    Cookies -.-> XHSBOT
-
-    XBOT --> XSEARCH
-
-    User["📩 '搜 karpathy 的推文'"] --> Hermes[🤖 Hermes]
-    Hermes --> Skill
-    Skill -->|"按步骤执行"| XSEARCH
-    XSEARCH -->|"playwright 启动"| Chromium["🦊 Chromium headless"]
-    Chromium -->|"注入 cookie"| XCom["x.com 真页面"]
-    XCom -->|"渲染好的 DOM"| Chromium
-    Chromium -->|"抓 article[data-testid='tweet']"| Result["📰 推文 JSON"]
-    Result --> Hermes
-    Hermes --> User2["💬 回复用户"]
-
-    classDef cred fill:#fff3e0,stroke:#f57c00
-    classDef tool fill:#e8f5e9,stroke:#388e3c
-    classDef cli fill:#e1f5fe,stroke:#0288d1
-    class XJ,XHS,Cookies cred
-    class XBOT,XHSBOT,Chromium tool
-    class XSEARCH cli
+```bash
+hermes profile create designer --clone
+hermes profile create programmer --clone
+hermes profile create researcher --clone
+hermes profile list
 ```
 
-### 为什么用 Cookie 而不是 API？
+`--clone` 复制默认 profile 的 config 和 .env 作为起点（API key 直接继承，不用重配）。
 
-!!! tip "取舍"
-    - **官方 API**（X API v2 / xurl）：稳，但要付费 + 注册 OAuth。
-    - **Cookie + Playwright**：免费，立等可用，但 cookie 1-3 个月过期一次。
+Akshay 在原文里给了三个范例 SOUL：
 
-我的判断：如果只是日常给我抓信息，cookie 这条路**性价比更高**——失效时重导一次就行。重要的是 cookie 文件**永远不进 LLM 的 context**（Hermes 的 skill 里明确禁止读 cookie 内容回流），LLM 只知道"调 xsearch CLI"，cookie 在 OS 层面被它的工具脚本读取。
+- **Designer**：手绘风插画师人设，调 Nano Banana 生成图
+- **Programmer**：staff engineer，话少直接，把执行委托给 Claude Code
+- **Researcher**：每天 8 点 Telegram 推送 AI 日报，覆盖 GitHub / 大厂 / 论文 / 社交
 
-### 几个踩过的坑（已写进 skill）
+这三个 profile **各自有独立的 Telegram bot**（@BotFather 三个 token，不能共用——Telegram 限制每个 token 只能一个连接），**各自的 SOUL.md 决定人设**，**各自的 skills 目录决定能力**。
+
+> **我的批注：这才是 Hermes 真正的产品形态。** 单 Agent 跟 Cursor / Claude Desktop 的差异化其实不大——都有持久记忆、都能跑工具。**但"一台机器同时跑 3 个完全隔离的专家 Agent，每个有自己的 Telegram bot 当门面"——这个开源生态目前是独一份的。** OpenClaw、Letta 都还做不到这个粒度的 isolation。
+>
+> 我自己目前没跑 multi-profile，因为单 Agent 还没用透。但能感觉到下一步——比如把"Karpathy 推文日报"那个 cron 任务挪到一个独立的 `researcher` profile 里，跟我主 dev profile 的 skills/memory 完全隔离，避免互相污染。等我把 GEPA 也跑通了再写一篇 multi-profile 实战。
+
+---
+
+## 🔑 一句话总结这套架构
+
+**SOUL 设定身份 → Runtime 捕获经验 → Curator 打扫库存 → GEPA 验证质量。**
+
+四件事像一条流水线：
 
 ```mermaid
 graph LR
-A1["❌ 直接调 X GraphQL API"] -->|"query_id 老变"| B1["404"]
-A2["❌ twikit 库"] -->|"X 改了首页 JS"| B2["KEY_BYTE indices 错误"]
-A3["❌ Nitter 镜像"] -->|"99% 已死"| B3["403 / 空 body"]
-A4["✅ Playwright + 真 chromium"] -->|"和真浏览器一样"| B4["稳定可用"]
+    SOUL[SOUL.md<br/>身份层<br/>静态] --> RUNTIME[运行时<br/>Memory + Skills<br/>持续生长]
+    RUNTIME --> CURATOR[Curator<br/>清理冗余<br/>7天/2小时触发]
+    CURATOR --> GEPA[GEPA<br/>离线进化<br/>用 trace 反向优化]
+    GEPA -.PR.-> RUNTIME
 
-classDef bad fill:#ffebee,stroke:#c62828
-classDef good fill:#e8f5e9,stroke:#388e3c
-class A1,A2,A3,B1,B2,B3 bad
-class A4,B4 good
+    style SOUL fill:#7a3a3a,stroke:#fff,color:#fff
+    style RUNTIME fill:#3a7a3a,stroke:#fff,color:#fff
+    style CURATOR fill:#7a7a3a,stroke:#fff,color:#fff
+    style GEPA fill:#3a4a7a,stroke:#fff,color:#fff
 ```
 
----
+**每一层都在解决前一层留下来的洞**：
 
-## 5️⃣ 自动化层 —— Cron 定时任务
+- 没 SOUL 的话，Memory 长出来的"用户偏好"是无主的、不一致的
+- 没 Runtime 的话，SOUL 只是个空人设，没有积累
+- 没 Curator 的话，Runtime 长出来的 skills 会爆掉 catalog
+- 没 GEPA 的话，Curator 留下来的 skills 质量没人能验证
 
-我每天 9:00（北京）会收到一份 AI/Agent 行业简报，整个流程是这样的：
-
-```mermaid
-sequenceDiagram
-autonumber
-participant Cron as ⏰ Cron 调度器
-participant Job as jobs.json<br/>(任务定义)
-participant Hermes as 🤖 Hermes Agent<br/>(独立 session)
-participant Skill as 📚 Skills
-participant CLI as 🛠️ xsearch / web_search
-participant FS as 💬 Feishu
-
-Note over Cron: 每分钟检查一次
-Cron->>Job: 9:00 北京 = 21:00 EDT 触发
-Job-->>Cron: 加载 prompt + skills 列表
-Cron->>Hermes: 启动新 session<br/>注入 prompt
-Hermes->>Skill: 加载 x-cookie-scraping
-Hermes->>CLI: xsearch --user karpathy
-CLI-->>Hermes: Karpathy 24h 内推文
-Hermes->>CLI: web_extract OpenAI/Anthropic 博客
-CLI-->>Hermes: 官方动态
-Hermes->>CLI: web_search 论文/行业新闻
-CLI-->>Hermes: 各类条目
-Hermes->>Hermes: 综合总结成 Markdown
-Hermes->>FS: 推送到飞书
-FS->>User: 我看到日报
-```
-
-### Cron 任务的关键设计
-
-```mermaid
-graph TB
-subgraph CronSystem["⏰ ~/.hermes/cron/"]
-    JobsJSON["jobs.json<br/>所有任务定义"]
-    Output["output/<br/>每次运行的输出归档"]
-    Lock[".tick.lock<br/>防止重复触发"]
-end
-
-JobsJSON --> JobDef
-
-subgraph JobDef["单个任务字段"]
-    Schedule["schedule<br/>'0 9 * * *' / 'every 2h'"]
-    Prompt["prompt<br/>给新 session 的指令"]
-    Skills["skills<br/>预加载哪些"]
-    Toolsets["enabled_toolsets<br/>限定 web/browser/terminal"]
-    Deliver["deliver<br/>送到哪个平台"]
-end
-
-JobsJSON -.->|"3 分钟硬超时"| Limit["每次跑不超过 3 分钟"]
-JobsJSON -.->|"skip_memory=True"| Pure["不污染主对话记忆"]
-
-classDef cron fill:#fce4ec,stroke:#c2185b
-class JobsJSON,Output,Lock,Schedule,Prompt,Skills,Toolsets,Deliver cron
-```
-
-!!! tip "Cron 任务的隔离性"
-    Cron 任务和你的主聊天是**完全隔离的**——它跑在独立 session 里，看不到你正在聊的东西，也不会把它的工作记忆写到主 MEMORY.md（因为 `skip_memory=True`）。这避免了"日报跑了一次就把一堆抓取细节塞进我的长期记忆"的污染。
-
----
-
-## 6️⃣ 把所有层串起来 —— 一张总览图
-
-```mermaid
-graph TB
-subgraph Touch["🌐 接入层"]
-    F[Feishu]
-    T[Telegram]
-    D[Discord]
-    C[CLI]
-end
-
-subgraph Brain["🤖 Hermes Agent (核心)"]
-    Loop[run_conversation 主循环]
-    Compress[上下文压缩]
-    Resolver[模型路由]
-end
-
-subgraph LLMs["🔮 LLM 后端"]
-    Bedrock[Bedrock<br/>Claude Opus 4.7]
-    Aux[Auxiliary<br/>压缩用小模型]
-end
-
-subgraph Mem2["🧠 记忆 (~/.hermes/)"]
-    MMD2[MEMORY.md]
-    UMD2[USER.md]
-    Sess[sessions/]
-end
-
-subgraph Cap["🛠️ 能力 (~/.hermes/)"]
-    Skills2[skills/<br/>20+ 分类]
-    Tools[tools/<br/>terminal/file/web/<br/>browser/vision/...]
-end
-
-subgraph Cred["🔐 凭据"]
-    ENV[.env<br/>API Keys]
-    Cook[cookies/<br/>web_session]
-    OAuth[auth.json<br/>OAuth tokens]
-end
-
-subgraph Auto["⏰ 自动化"]
-    CronJ[cron/jobs.json]
-    Hooks[hooks/]
-    Webhooks[webhook 订阅]
-end
-
-F --> Brain
-T --> Brain
-D --> Brain
-C --> Brain
-
-Brain --> Mem2
-Brain --> Cap
-Brain --> Cred
-Brain --> Auto
-
-Loop --> Compress
-Compress --> Aux
-Loop --> Resolver
-Resolver --> Bedrock
-
-Tools --> Cred
-CronJ -.->|定时启动新 session| Brain
-
-classDef touch fill:#e1f5fe,stroke:#0288d1
-classDef brain fill:#f3e5f5,stroke:#7b1fa2
-classDef llm fill:#fff3e0,stroke:#f57c00
-classDef mem fill:#f3e5f5,stroke:#7b1fa2
-classDef cap fill:#e8f5e9,stroke:#388e3c
-classDef cred fill:#fff3e0,stroke:#f57c00
-classDef auto fill:#fce4ec,stroke:#c2185b
-
-class F,T,D,C touch
-class Loop,Compress,Resolver brain
-class Bedrock,Aux llm
-class MMD2,UMD2,Sess mem
-class Skills2,Tools cap
-class ENV,Cook,OAuth cred
-class CronJ,Hooks,Webhooks auto
-```
+整套设计是**互相托底**，不是简单堆砌。这是我读完 Akshay 这篇之后最大的"啊，我之前的理解太浅了"的点。
 
 ---
 
 ## 🤔 我的几点判断
 
 !!! abstract "TL;DR"
-1. **Hermes 不是"一个聊天机器人"，是一个有持久状态的"AI OS"**——文件系统就是它的世界。
-2. **记忆 + 技能 + 工具的三层分离**很巧妙：事实级注入、操作级按需加载、能力级随时调用。
-3. **本地化是核心优势**——所有数据在我自己电脑上，不依赖云端 RAG 服务，隐私和速度都有保障。
+    1. **Hermes 的护城河不是任何单点功能，是"自演化 + 多层记忆 + 离线优化"打包在一起。** 这三件事单独看都不算新，但开源界目前只有它一家整合。
+    2. **SOUL.md 是低估的杠杆。** 一个文件改完，下游所有 skill / memory / 措辞跟着换风格，没有任何手工成本。
+    3. **GEPA 是中长期的杀手锏，但短期对个人用户用处不大——除非你已经有几十次 trace 在某个 skill 上。**
+    4. **Profiles 才是 Hermes 真正的产品形态**——多 Agent 隔离是开源界的稀缺能力。
 
-### 和 ChatGPT / Claude 网页版的本质区别
+几个**我跟 Akshay 看法不太一样**的地方：
 
-<div class="grid" markdown>
+**1. "三大能力打包"的叙事，runtime + memory 部分是真的，weight-training 部分（GEPA）现实里没那么"必备"。**
+   GEPA 是真好东西，但它在独立 repo、独立流程、需要主动投入。**对 90% 个人用户来说，前两件事（自演化 Skills + 多层 memory）就已经把对手甩开了。** 把 GEPA 也算进"开箱即得的差异化"我觉得有点夸大。
 
-<div markdown>
-:material-rocket-launch: **Hermes Agent**
-{ .center }
+**2. "$2-10 一轮 GEPA" 数字很诱人，但门槛在评测集，不在 API 费。**
+   你得先有真实的 trace、真实的 golden case，否则跑出来的优化方向是被你自己的虚构 case 牵着走的。这个隐性成本 Akshay 没强调。
 
-- ✅ **MEMORY.md 跨会话**：上次说过的事下次还记得
-- ✅ **真 shell + 真浏览器**：能 git push、能登小红书
-- ✅ **Skills 系统**：程序性知识可沉淀
-- ✅ **cron + gateway**：定时主动推消息
-- ✅ **多平台触手**：飞书 / TG / Discord / 邮件
-- ✅ **数据归属本地**：`~/.hermes/` 全在我电脑上
-- ✅ **切换 LLM 一行配置**：Opus / GPT-5 / 自部署都行
-</div>
-
-<div markdown>
-:material-web: **ChatGPT / Claude Web**
-{ .center }
-
-- ❌ 每次新对话从零开始
-- 🟡 部分（Code Interpreter，沙箱有限制）
-- ❌ 没有自定义"程序性知识"沉淀
-- ❌ 永远是"我问它答"，不会主动找我
-- ❌ 只在网页 / App 内
-- 🟡 云端，受厂商 ToS 约束
-- ❌ 锁定厂商
-</div>
-
-</div>
-
-### 这套架构最让我觉得"做对了"的地方
-
-1. **文件系统作为状态存储**。一切都是 Markdown / JSON / SQLite，可以 grep、可以 git diff、可以 backup——比"云端不可见的记忆服务"可控得多。
-2. **Skills 的自我维护机制**。这不是简单的 RAG，而是"边用边修教程"——每次踩坑都让下一次更顺利。
-3. **配置和秘密强分离**。`config.yaml` 可同步、`.env` 永远私密——这种"工程性的克制"在 AI 工具里很少见。
-4. **Cron + Skills + Cookies 组合的可扩展性**。我搭 X 抓取栈花了 1 个晚上，下一个平台（知乎/微博/B站）只需要复用同样的模式。
-
-### 不太满意的地方
-
-1. **单 turn 输出 token 上限太低**——遇到长内容（比如这篇文章）容易被截断，需要主动拆段写。已经把 `model.max_tokens` 调到了 32K。
-2. **MEMORY.md 容量受限**——2K 字符跨多个领域用很容易撑爆，必须经常合并精炼。某种程度上这逼迫记忆质量，但也确实是约束。
-3. **Cookie 失效需要手动重导**——目前没有自动检测 + 提醒的机制（虽然脚本里加了 expiry warning）。
+**3. 90 turns 上限对 subagent 也共享——这一条是被低估的安全机制。**
+   Akshay 提了一句就过去了。但任何用过别家 Agent 框架的人都知道，**递归 delegate 没全局上限**是吃 credits 的元凶之一。Hermes 这条设计是把"安全"放在便利前面，值得多写两笔。
 
 ---
 
 ## 🔗 延伸阅读
 
-- [Hermes Agent 官网](https://hermes-agent.nousresearch.com/) —— 文档和 quick start
-- [Hermes GitHub 仓库](https://github.com/NousResearch/hermes-agent) —— 源代码
-- [Anthropic: Building Agents with Claude](https://www.anthropic.com/engineering/building-effective-agents) —— Agent 设计的官方思考
-- [Cognition: Don't Build Multi-Agents](https://cognition.ai/blog/dont-build-multi-agents) —— 关于 agent 架构取舍的另一种声音
-- [Karpathy: LLM as OS](https://x.com/karpathy/status/1707437820045062561) —— "把 LLM 当成新一代操作系统"的视角，与 Hermes 的"AI OS"定位一脉相承
+- [Akshay Pachaar — Hermes Agent Masterclass](https://x.com/akshay_pachaar/status/2054564519280804028) —— 本文重写所基于的原文（X Article 形式，2.2M 阅读）
+- [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent) —— Hermes 主仓库（90K+ star）
+- [NousResearch/hermes-agent-self-evolution](https://github.com/NousResearch/hermes-agent-self-evolution) —— GEPA 独立仓库
+- [How to Beat GRPO Without Touching Model Weights](https://x.com/akshay_pachaar/status/1786925540810395988) —— Akshay 写的 GEPA vs GRPO 专文
+- [Hermes Agent 官方文档](https://hermes-agent.nousresearch.com/docs) —— 配置参数细节查这里
+- [我的旧版 Hermes 架构图解](https://ihoooohi.github.io/garden/tech/hermes-architecture/)（已被本文替换）—— 从 `~/.hermes/` 目录结构入手的角度，可看 git 历史
 
 ---
 
-*这是 Garden 里的第 2 篇正式文章，也是把"我用的工具"系统性拆解的第一次尝试。如果对你也有帮助，欢迎转发；如果你有更好的 Agent 架构思路，欢迎来 GitHub 讨论。*
-
-
-
-
+*这是 garden 里的第 2 篇技术笔记的重写版。Akshay 那篇的结构和素材用得很多，但所有判断、批注、跟自己实际使用经验对齐的部分都是我加的——garden 的定位是"批注 + 对比 + 提炼"，不是搬运。原文有需要请直接去 X 看 Akshay 本人。*
