@@ -112,6 +112,10 @@ nav:
   - 🛠️ 技术笔记:
       - tech/index.md
       - tech/hermes-architecture.md
+  - 💼 面试题集:
+      - interview/index.md
+      - interview/ai-agent-interview-tour.md
+      - interview/agent-service-reliability.md
   - 💭 思考与随笔:
       - thoughts/index.md
   - 🏷️ 标签: tags.md
