@@ -112,6 +112,7 @@ nav:
   - 🛠️ 技术笔记:
       - tech/index.md
       - tech/hermes-architecture.md
+      - tech/hermes-session-search.md
   - 💼 面试题集:
       - interview/index.md
       - interview/ai-agent-interview-tour.md
