@@ -11,20 +11,7 @@ tags:
 
 # 🏛️ Hermes Agent 架构图解
 
-<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 2rem 1.5rem; border-radius: 12px; color: white; margin: 1.5rem 0;">
-<p style="font-size: 1.1rem; line-height: 1.7; margin: 0 0 1rem 0; font-weight: 500;">
-Hermes 不是一个聊天框，<br>
-它是一个有<b>持久记忆</b>、跨平台触手、可定时跑、能<b>自学技能</b>的"AI 个人秘书"——<br>
-而它整个人就活在 <code style="background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 4px; color: #fff;">~/.hermes/</code> 这一个目录里。
-</p>
-<div style="display: flex; flex-wrap: wrap; gap: 1.5rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.2);">
-  <div><div style="font-size: 1.6rem; font-weight: 700;">6</div><div style="font-size: 0.85rem; opacity: 0.9;">核心层</div></div>
-  <div><div style="font-size: 1.6rem; font-weight: 700;">~50</div><div style="font-size: 0.85rem; opacity: 0.9;">Skills</div></div>
-  <div><div style="font-size: 1.6rem; font-weight: 700;">2K</div><div style="font-size: 0.85rem; opacity: 0.9;">字符 MEMORY</div></div>
-  <div><div style="font-size: 1.6rem; font-weight: 700;">15</div><div style="font-size: 0.85rem; opacity: 0.9;">子目录</div></div>
-  <div><div style="font-size: 1.6rem; font-weight: 700;">∞</div><div style="font-size: 0.85rem; opacity: 0.9;">可搜索 sessions</div></div>
-</div>
-</div>
+> 一句话定位：**Hermes 不是一个聊天框，它是一个有持久记忆、跨平台触手、可定时跑、能自学技能的"AI 个人秘书"——而它整个人就活在 `~/.hermes/` 这一个目录里。**
 
 !!! abstract "为什么写这篇"
     用了 Hermes 一段时间后，我意识到它和 ChatGPT 那种"打开网页问几句"的工具是完全不同的物种——它有**持久记忆**、有**自动化定时任务**、能**调真实工具**（看我电脑、跑命令、调浏览器）、还会**自己积累技能**。我想搞清楚它每次回答我之前都"看到了什么"、"做了什么"，于是把整个 `~/.hermes/` 目录拆开分析了一遍，得到这篇图解。
