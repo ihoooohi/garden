@@ -11,7 +11,20 @@ tags:
 
 # 🏛️ Hermes Agent 架构图解
 
-> 一句话定位：**Hermes 不是一个聊天框，它是一个有持久记忆、跨平台触手、可定时跑、能自学技能的"AI 个人秘书"——而它整个人就活在 `~/.hermes/` 这一个目录里。**
+<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 2rem 1.5rem; border-radius: 12px; color: white; margin: 1.5rem 0;">
+<p style="font-size: 1.1rem; line-height: 1.7; margin: 0 0 1rem 0; font-weight: 500;">
+Hermes 不是一个聊天框，<br>
+它是一个有<b>持久记忆</b>、跨平台触手、可定时跑、能<b>自学技能</b>的"AI 个人秘书"——<br>
+而它整个人就活在 <code style="background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 4px; color: #fff;">~/.hermes/</code> 这一个目录里。
+</p>
+<div style="display: flex; flex-wrap: wrap; gap: 1.5rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.2);">
+  <div><div style="font-size: 1.6rem; font-weight: 700;">6</div><div style="font-size: 0.85rem; opacity: 0.9;">核心层</div></div>
+  <div><div style="font-size: 1.6rem; font-weight: 700;">~50</div><div style="font-size: 0.85rem; opacity: 0.9;">Skills</div></div>
+  <div><div style="font-size: 1.6rem; font-weight: 700;">2K</div><div style="font-size: 0.85rem; opacity: 0.9;">字符 MEMORY</div></div>
+  <div><div style="font-size: 1.6rem; font-weight: 700;">15</div><div style="font-size: 0.85rem; opacity: 0.9;">子目录</div></div>
+  <div><div style="font-size: 1.6rem; font-weight: 700;">∞</div><div style="font-size: 0.85rem; opacity: 0.9;">可搜索 sessions</div></div>
+</div>
+</div>
 
 !!! abstract "为什么写这篇"
     用了 Hermes 一段时间后，我意识到它和 ChatGPT 那种"打开网页问几句"的工具是完全不同的物种——它有**持久记忆**、有**自动化定时任务**、能**调真实工具**（看我电脑、跑命令、调浏览器）、还会**自己积累技能**。我想搞清楚它每次回答我之前都"看到了什么"、"做了什么"，于是把整个 `~/.hermes/` 目录拆开分析了一遍，得到这篇图解。
@@ -20,7 +33,59 @@ tags:
 
 ## 📦 整体鸟瞰图
 
-整个 Hermes 在我机器上就活在 `~/.hermes/` 这一个目录里，按职责拆成 **6 大类**：
+整个 Hermes 在我机器上就活在 `~/.hermes/` 这一个目录里，按职责拆成 **6 大类**——先用一张组件墙看清边界：
+
+<div class="grid cards" markdown>
+
+-   :material-cog-outline:{ .lg .middle } __配置层__
+
+    ---
+
+    `config.yaml` 决定模型/Provider/工具开关；`.env` 装秘钥。**两文件强分离**——一份能 git，一份永远私密。
+
+    [:octicons-arrow-right-24: 跳到配置层](#1-hermes)
+
+-   :material-brain:{ .lg .middle } __记忆层__
+
+    ---
+
+    `memories/MEMORY.md` 每 turn 全量注入 system prompt；`sessions/*.jsonl` 是可搜索的"长期外存"。
+
+    [:octicons-arrow-right-24: 跳到记忆层](#2)
+
+-   :material-tools:{ .lg .middle } __能力层__
+
+    ---
+
+    Skills = 程序性记忆。**用的时候按需加载，用完发现坑就自己 patch SKILL.md**——会越用越懂你。
+
+    [:octicons-arrow-right-24: 跳到能力层](#3-skills)
+
+-   :material-key-variant:{ .lg .middle } __凭据层__
+
+    ---
+
+    `cookies/{x,xiaohongshu}.json` chmod 600。绕开 OAuth 直接用浏览器登录态调真实平台。
+
+    [:octicons-arrow-right-24: 跳到凭据层](#4-cookie)
+
+-   :material-clock-outline:{ .lg .middle } __自动化层__
+
+    ---
+
+    `cron/jobs.json` + Gateway。每天 21:00 EDT 自动抓 Karpathy 推文整理日报推到飞书。
+
+    [:octicons-arrow-right-24: 跳到自动化层](#5-cron)
+
+-   :material-folder-multiple-outline:{ .lg .middle } __运行时层__
+
+    ---
+
+    `logs/` + `cache/`。所有 LLM 调用、tool call、错误堆栈都落盘——可 grep、可 git diff。
+
+</div>
+
+下面这张图把上面 6 块的协作关系和数据流画出来：
 
 ```mermaid
 graph TB
@@ -531,15 +596,35 @@ class CronJ,Hooks,Webhooks auto
 
 ### 和 ChatGPT / Claude 网页版的本质区别
 
-| | Hermes Agent | ChatGPT/Claude Web |
-|---|---|---|
-| 上下文持久性 | ✅ MEMORY.md 跨会话 | ❌ 每次新对话从零 |
-| 工具调用 | ✅ 真 shell + 真浏览器 | 部分（Code Interpreter） |
-| 自定义"程序性知识" | ✅ Skills 系统 | ❌ |
-| 定时主动推送 | ✅ cron + gateway | ❌ |
-| 多平台触手 | ✅ 飞书/TG/Discord/邮件 | ❌ 只在网页/App |
-| 数据归属 | 本地 ~/.hermes/ | 云端 |
-| 切换 LLM | ✅ 配置一行 | ❌ 锁定厂商 |
+<div class="grid" markdown>
+
+<div markdown>
+:material-rocket-launch: **Hermes Agent**
+{ .center }
+
+- ✅ **MEMORY.md 跨会话**：上次说过的事下次还记得
+- ✅ **真 shell + 真浏览器**：能 git push、能登小红书
+- ✅ **Skills 系统**：程序性知识可沉淀
+- ✅ **cron + gateway**：定时主动推消息
+- ✅ **多平台触手**：飞书 / TG / Discord / 邮件
+- ✅ **数据归属本地**：`~/.hermes/` 全在我电脑上
+- ✅ **切换 LLM 一行配置**：Opus / GPT-5 / 自部署都行
+</div>
+
+<div markdown>
+:material-web: **ChatGPT / Claude Web**
+{ .center }
+
+- ❌ 每次新对话从零开始
+- 🟡 部分（Code Interpreter，沙箱有限制）
+- ❌ 没有自定义"程序性知识"沉淀
+- ❌ 永远是"我问它答"，不会主动找我
+- ❌ 只在网页 / App 内
+- 🟡 云端，受厂商 ToS 约束
+- ❌ 锁定厂商
+</div>
+
+</div>
 
 ### 这套架构最让我觉得"做对了"的地方
 
