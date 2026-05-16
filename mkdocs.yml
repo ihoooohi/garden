@@ -114,6 +114,7 @@ nav:
       - tech/hermes-architecture.md
       - tech/hermes-session-search.md
       - tech/hermes-team-deployment.md
+      - tech/web-scraping-toolchain.md
   - 💼 面试题集:
       - interview/index.md
       - interview/ai-agent-interview-tour.md
