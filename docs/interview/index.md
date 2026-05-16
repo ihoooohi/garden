@@ -44,11 +44,21 @@ icon: material/briefcase-search
 
     [:octicons-arrow-right-24: 进入](agent-service-reliability.md)
 
+-   :material-database-search:{ .lg .middle } **阿里一面：向量数据库三连击**
+
+    ---
+
+    **来源**：公众号《小林coding》—小林面试笔记
+    **形态**：连环拷打 → 60 秒标杆答案
+    **覆盖**：Milvus 选型 · HNSW 参数 · P50/P99/QPS 数字 · SQ8 量化 · Segment 合并抖动
+
+    [:octicons-arrow-right-24: 进入](vector-db-milvus.md)
+
 </div>
 
 ## 阅读建议
 
-如果你也在面 Agent 岗，**先读第一篇**——它是面试官提问思路的全景图，让你知道"哪类问题在测哪条线"；**再读第二篇**——它是把第一篇里"线上会不会出事"那条线给你打满的标杆答案。两篇互为骨架与血肉。
+如果你也在面 Agent 岗，**先读第一篇**——它是面试官提问思路的全景图；**再读第二篇**——把"线上会不会出事"打满的标杆答案；**第三篇**则把视线下沉到 RAG 的存储底座，**用三个真实数字 + 一个真实瓶颈拆穿"Demo 经验"和"生产经验"的差距**。三篇配合食用：上中下三层 Agent 应用栈面试线索全在里面。
 
 ---
 

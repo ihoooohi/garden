@@ -120,6 +120,7 @@ nav:
       - interview/index.md
       - interview/ai-agent-interview-tour.md
       - interview/agent-service-reliability.md
+      - interview/vector-db-milvus.md
   - 💭 思考与随笔:
       - thoughts/index.md
   - 🏷️ 标签: tags.md
