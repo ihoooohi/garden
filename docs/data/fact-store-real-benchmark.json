@@ -1,0 +1,839 @@
+{
+  "facts_count": 31,
+  "queries_meta": [
+    {
+      "qid": "Q1",
+      "query_natural": "我之前 sonnet 4.6 不是配过吗，是 1m 还是 200k？",
+      "query_keywords": "sonnet 4.6 context",
+      "intent": "查 Bedrock context 长度的具体数字",
+      "expected_my_ids": [
+        7,
+        105
+      ],
+      "expected_actual_ids": [
+        7,
+        24
+      ],
+      "rationale": "fact 7 明确说 Sonnet 4.6 是 200K（不要记错成 1M）；memory 105 也提到 Opus 1M / Sonnet 200K context 数字别记错"
+    },
+    {
+      "qid": "Q2",
+      "query_natural": "我有哪些飞书相关的 cron",
+      "query_keywords": "飞书 cron",
+      "intent": "查所有飞书 + cron 关联的项目",
+      "expected_my_ids": [
+        6,
+        201
+      ],
+      "expected_actual_ids": [
+        6,
+        26
+      ],
+      "rationale": "fact 6 是 NewsBot（前缀 newsbot 飞书 cron 每日简报 ec71837e0a3e），201 是北京时区/cron 时差换算的硬约束"
+    },
+    {
+      "qid": "Q3",
+      "query_natural": "agent-reach 装在哪？",
+      "query_keywords": "agent-reach 安装路径",
+      "intent": "查具体安装位置",
+      "expected_my_ids": [
+        1,
+        101
+      ],
+      "expected_actual_ids": [
+        1,
+        20
+      ],
+      "rationale": "fact 1 明确说 ~/.local/bin/（pipx），memory 101 说 web 搜索栈搭好包含 agent-reach"
+    },
+    {
+      "qid": "Q4",
+      "query_natural": "知识花园在哪？怎么部署？",
+      "query_keywords": "garden 部署",
+      "intent": "查 garden 仓库和发布流程",
+      "expected_my_ids": [
+        2,
+        102
+      ],
+      "expected_actual_ids": [
+        2,
+        21
+      ],
+      "rationale": "fact 2 详述 ihoooohi/garden + GitHub Actions 自动部署，memory 102 简版同信息"
+    },
+    {
+      "qid": "Q5",
+      "query_natural": "我配过哪些社交平台 cookie？",
+      "query_keywords": "社交 cookie",
+      "intent": "查 cookie 相关工具栈",
+      "expected_my_ids": [
+        4,
+        104
+      ],
+      "expected_actual_ids": [
+        4,
+        23
+      ],
+      "rationale": "fact 4 明确列 X/小红书/知乎，memory 104 同样信息"
+    },
+    {
+      "qid": "Q6",
+      "query_natural": "Bedrock 我改过什么本地 patch 不能 git pull 的？",
+      "query_keywords": "Bedrock patch git pull",
+      "intent": "查本地自留 patches 列表",
+      "expected_my_ids": [
+        8,
+        105
+      ],
+      "expected_actual_ids": [
+        8,
+        24
+      ],
+      "rationale": "fact 8 详细列 4 条 patches，memory 105 同信息"
+    },
+    {
+      "qid": "Q7",
+      "query_natural": "我是哪个时区？回复用什么语言？",
+      "query_keywords": "时区 中文",
+      "intent": "查个人偏好",
+      "expected_my_ids": [
+        201,
+        202
+      ],
+      "expected_actual_ids": [
+        26,
+        27
+      ],
+      "rationale": "USER 201 北京 UTC+8，202 中文交流"
+    },
+    {
+      "qid": "Q8",
+      "query_natural": "fact_store 的 HRR 到底好不好用",
+      "query_keywords": "fact_store HRR benchmark",
+      "intent": "查之前的 benchmark 结论",
+      "expected_my_ids": [
+        17
+      ],
+      "expected_actual_ids": [
+        17
+      ],
+      "rationale": "fact 17 是上一次 benchmark 的完整结论：fallback 反而更准更快、HRR 中文召回掉 15pp、别建议装 numpy 开 HRR"
+    },
+    {
+      "qid": "Q9",
+      "query_natural": "飞书 OpenAPI 我配的 app id 是什么？",
+      "query_keywords": "飞书 app id",
+      "intent": "查具体 ID",
+      "expected_my_ids": [
+        3,
+        103
+      ],
+      "expected_actual_ids": [
+        3,
+        22
+      ],
+      "rationale": "fact 3 cli_aa8f549aae385bcd 主 profile，memory 103 简版"
+    },
+    {
+      "qid": "Q10",
+      "query_natural": "在飞书里能写 markdown 表格吗？",
+      "query_keywords": "飞书 markdown 表格",
+      "intent": "查格式化硬规则",
+      "expected_my_ids": [
+        200
+      ],
+      "expected_actual_ids": [
+        25
+      ],
+      "rationale": "USER 200 明确：飞书表格触发降级 text，绝不写"
+    },
+    {
+      "qid": "Q11",
+      "query_natural": "我之前是怎么说的关于自信先答错这件事的",
+      "query_keywords": "自信先答错 纠正",
+      "intent": "查纠错历史 + 教训",
+      "expected_my_ids": [
+        11,
+        15,
+        18,
+        205
+      ],
+      "expected_actual_ids": [
+        11,
+        15,
+        18,
+        30
+      ],
+      "rationale": "fact 11 历史纠错 GEPA + 警告问题；fact 15 fact_store probe 那次纠错；fact 18 数据驱动硬原则；USER 205 hermes-agent-self-evolution 那次纠错。这是 sparse-but-thematic 查询"
+    },
+    {
+      "qid": "Q12",
+      "query_natural": "写技术文章用户喜欢什么风格",
+      "query_keywords": "技术文章 风格 偏好",
+      "intent": "查文章写作偏好",
+      "expected_my_ids": [
+        12,
+        13,
+        14,
+        16,
+        204
+      ],
+      "expected_actual_ids": [
+        12,
+        13,
+        14,
+        16,
+        29
+      ],
+      "rationale": "fact 12/13/14/16 都是写文章偏好（不堆原理、真实问题开篇、按对话顺序重组、视觉克制），USER 204 视觉品味挑紫色渐变。多条相关 fact 测召回完整度"
+    }
+  ],
+  "conditions": {
+    "HRR_natural": [
+      {
+        "qid": "Q1",
+        "query_text": "我之前 sonnet 4.6 不是配过吗，是 1m 还是 200k？",
+        "retrieved_ids": [],
+        "expected_ids": [
+          7,
+          24
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.18
+      },
+      {
+        "qid": "Q2",
+        "query_text": "我有哪些飞书相关的 cron",
+        "retrieved_ids": [
+          12
+        ],
+        "expected_ids": [
+          6,
+          26
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.92
+      },
+      {
+        "qid": "Q3",
+        "query_text": "agent-reach 装在哪？",
+        "retrieved_ids": [],
+        "expected_ids": [
+          1,
+          20
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.09
+      },
+      {
+        "qid": "Q4",
+        "query_text": "知识花园在哪？怎么部署？",
+        "retrieved_ids": [],
+        "expected_ids": [
+          2,
+          21
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.06
+      },
+      {
+        "qid": "Q5",
+        "query_text": "我配过哪些社交平台 cookie？",
+        "retrieved_ids": [],
+        "expected_ids": [
+          4,
+          23
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.05
+      },
+      {
+        "qid": "Q6",
+        "query_text": "Bedrock 我改过什么本地 patch 不能 git pull 的？",
+        "retrieved_ids": [],
+        "expected_ids": [
+          8,
+          24
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.06
+      },
+      {
+        "qid": "Q7",
+        "query_text": "我是哪个时区？回复用什么语言？",
+        "retrieved_ids": [],
+        "expected_ids": [
+          26,
+          27
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.04
+      },
+      {
+        "qid": "Q8",
+        "query_text": "fact_store 的 HRR 到底好不好用",
+        "retrieved_ids": [],
+        "expected_ids": [
+          17
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.05
+      },
+      {
+        "qid": "Q9",
+        "query_text": "飞书 OpenAPI 我配的 app id 是什么？",
+        "retrieved_ids": [],
+        "expected_ids": [
+          3,
+          22
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.07
+      },
+      {
+        "qid": "Q10",
+        "query_text": "在飞书里能写 markdown 表格吗？",
+        "retrieved_ids": [],
+        "expected_ids": [
+          25
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.04
+      },
+      {
+        "qid": "Q11",
+        "query_text": "我之前是怎么说的关于自信先答错这件事的",
+        "retrieved_ids": [],
+        "expected_ids": [
+          11,
+          15,
+          18,
+          30
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.03
+      },
+      {
+        "qid": "Q12",
+        "query_text": "写技术文章用户喜欢什么风格",
+        "retrieved_ids": [],
+        "expected_ids": [
+          12,
+          13,
+          14,
+          16,
+          29
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.03
+      }
+    ],
+    "HRR_keywords": [
+      {
+        "qid": "Q1",
+        "query_text": "sonnet 4.6 context",
+        "retrieved_ids": [],
+        "expected_ids": [
+          7,
+          24
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.03
+      },
+      {
+        "qid": "Q2",
+        "query_text": "飞书 cron",
+        "retrieved_ids": [
+          6
+        ],
+        "expected_ids": [
+          6,
+          26
+        ],
+        "P@5": 1.0,
+        "R@5": 0.5,
+        "time_ms": 0.42
+      },
+      {
+        "qid": "Q3",
+        "query_text": "agent-reach 安装路径",
+        "retrieved_ids": [],
+        "expected_ids": [
+          1,
+          20
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.05
+      },
+      {
+        "qid": "Q4",
+        "query_text": "garden 部署",
+        "retrieved_ids": [],
+        "expected_ids": [
+          2,
+          21
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.05
+      },
+      {
+        "qid": "Q5",
+        "query_text": "社交 cookie",
+        "retrieved_ids": [
+          23,
+          4
+        ],
+        "expected_ids": [
+          4,
+          23
+        ],
+        "P@5": 1.0,
+        "R@5": 1.0,
+        "time_ms": 0.65
+      },
+      {
+        "qid": "Q6",
+        "query_text": "Bedrock patch git pull",
+        "retrieved_ids": [
+          8
+        ],
+        "expected_ids": [
+          8,
+          24
+        ],
+        "P@5": 1.0,
+        "R@5": 0.5,
+        "time_ms": 0.6
+      },
+      {
+        "qid": "Q7",
+        "query_text": "时区 中文",
+        "retrieved_ids": [],
+        "expected_ids": [
+          26,
+          27
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.06
+      },
+      {
+        "qid": "Q8",
+        "query_text": "fact_store HRR benchmark",
+        "retrieved_ids": [
+          17
+        ],
+        "expected_ids": [
+          17
+        ],
+        "P@5": 1.0,
+        "R@5": 1.0,
+        "time_ms": 0.49
+      },
+      {
+        "qid": "Q9",
+        "query_text": "飞书 app id",
+        "retrieved_ids": [
+          3,
+          6
+        ],
+        "expected_ids": [
+          3,
+          22
+        ],
+        "P@5": 0.5,
+        "R@5": 0.5,
+        "time_ms": 0.96
+      },
+      {
+        "qid": "Q10",
+        "query_text": "飞书 markdown 表格",
+        "retrieved_ids": [],
+        "expected_ids": [
+          25
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.1
+      },
+      {
+        "qid": "Q11",
+        "query_text": "自信先答错 纠正",
+        "retrieved_ids": [],
+        "expected_ids": [
+          11,
+          15,
+          18,
+          30
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.05
+      },
+      {
+        "qid": "Q12",
+        "query_text": "技术文章 风格 偏好",
+        "retrieved_ids": [],
+        "expected_ids": [
+          12,
+          13,
+          14,
+          16,
+          29
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.04
+      }
+    ],
+    "noHRR_natural": [
+      {
+        "qid": "Q1",
+        "query_text": "我之前 sonnet 4.6 不是配过吗，是 1m 还是 200k？",
+        "retrieved_ids": [],
+        "expected_ids": [
+          7,
+          24
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.1
+      },
+      {
+        "qid": "Q2",
+        "query_text": "我有哪些飞书相关的 cron",
+        "retrieved_ids": [
+          12
+        ],
+        "expected_ids": [
+          6,
+          26
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.14
+      },
+      {
+        "qid": "Q3",
+        "query_text": "agent-reach 装在哪？",
+        "retrieved_ids": [],
+        "expected_ids": [
+          1,
+          20
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.03
+      },
+      {
+        "qid": "Q4",
+        "query_text": "知识花园在哪？怎么部署？",
+        "retrieved_ids": [],
+        "expected_ids": [
+          2,
+          21
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.04
+      },
+      {
+        "qid": "Q5",
+        "query_text": "我配过哪些社交平台 cookie？",
+        "retrieved_ids": [],
+        "expected_ids": [
+          4,
+          23
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.04
+      },
+      {
+        "qid": "Q6",
+        "query_text": "Bedrock 我改过什么本地 patch 不能 git pull 的？",
+        "retrieved_ids": [],
+        "expected_ids": [
+          8,
+          24
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.06
+      },
+      {
+        "qid": "Q7",
+        "query_text": "我是哪个时区？回复用什么语言？",
+        "retrieved_ids": [],
+        "expected_ids": [
+          26,
+          27
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.03
+      },
+      {
+        "qid": "Q8",
+        "query_text": "fact_store 的 HRR 到底好不好用",
+        "retrieved_ids": [],
+        "expected_ids": [
+          17
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.04
+      },
+      {
+        "qid": "Q9",
+        "query_text": "飞书 OpenAPI 我配的 app id 是什么？",
+        "retrieved_ids": [],
+        "expected_ids": [
+          3,
+          22
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.07
+      },
+      {
+        "qid": "Q10",
+        "query_text": "在飞书里能写 markdown 表格吗？",
+        "retrieved_ids": [],
+        "expected_ids": [
+          25
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.05
+      },
+      {
+        "qid": "Q11",
+        "query_text": "我之前是怎么说的关于自信先答错这件事的",
+        "retrieved_ids": [],
+        "expected_ids": [
+          11,
+          15,
+          18,
+          30
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.03
+      },
+      {
+        "qid": "Q12",
+        "query_text": "写技术文章用户喜欢什么风格",
+        "retrieved_ids": [],
+        "expected_ids": [
+          12,
+          13,
+          14,
+          16,
+          29
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.02
+      }
+    ],
+    "noHRR_keywords": [
+      {
+        "qid": "Q1",
+        "query_text": "sonnet 4.6 context",
+        "retrieved_ids": [],
+        "expected_ids": [
+          7,
+          24
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.07
+      },
+      {
+        "qid": "Q2",
+        "query_text": "飞书 cron",
+        "retrieved_ids": [
+          6
+        ],
+        "expected_ids": [
+          6,
+          26
+        ],
+        "P@5": 1.0,
+        "R@5": 0.5,
+        "time_ms": 0.13
+      },
+      {
+        "qid": "Q3",
+        "query_text": "agent-reach 安装路径",
+        "retrieved_ids": [],
+        "expected_ids": [
+          1,
+          20
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.02
+      },
+      {
+        "qid": "Q4",
+        "query_text": "garden 部署",
+        "retrieved_ids": [],
+        "expected_ids": [
+          2,
+          21
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.03
+      },
+      {
+        "qid": "Q5",
+        "query_text": "社交 cookie",
+        "retrieved_ids": [
+          23,
+          4
+        ],
+        "expected_ids": [
+          4,
+          23
+        ],
+        "P@5": 1.0,
+        "R@5": 1.0,
+        "time_ms": 0.1
+      },
+      {
+        "qid": "Q6",
+        "query_text": "Bedrock patch git pull",
+        "retrieved_ids": [
+          8
+        ],
+        "expected_ids": [
+          8,
+          24
+        ],
+        "P@5": 1.0,
+        "R@5": 0.5,
+        "time_ms": 0.11
+      },
+      {
+        "qid": "Q7",
+        "query_text": "时区 中文",
+        "retrieved_ids": [],
+        "expected_ids": [
+          26,
+          27
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.04
+      },
+      {
+        "qid": "Q8",
+        "query_text": "fact_store HRR benchmark",
+        "retrieved_ids": [
+          17
+        ],
+        "expected_ids": [
+          17
+        ],
+        "P@5": 1.0,
+        "R@5": 1.0,
+        "time_ms": 0.1
+      },
+      {
+        "qid": "Q9",
+        "query_text": "飞书 app id",
+        "retrieved_ids": [
+          3,
+          6
+        ],
+        "expected_ids": [
+          3,
+          22
+        ],
+        "P@5": 0.5,
+        "R@5": 0.5,
+        "time_ms": 0.11
+      },
+      {
+        "qid": "Q10",
+        "query_text": "飞书 markdown 表格",
+        "retrieved_ids": [],
+        "expected_ids": [
+          25
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.04
+      },
+      {
+        "qid": "Q11",
+        "query_text": "自信先答错 纠正",
+        "retrieved_ids": [],
+        "expected_ids": [
+          11,
+          15,
+          18,
+          30
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.03
+      },
+      {
+        "qid": "Q12",
+        "query_text": "技术文章 风格 偏好",
+        "retrieved_ids": [],
+        "expected_ids": [
+          12,
+          13,
+          14,
+          16,
+          29
+        ],
+        "P@5": 0.0,
+        "R@5": 0.0,
+        "time_ms": 0.03
+      }
+    ]
+  },
+  "summary": {
+    "HRR_natural": {
+      "avg_P@5": 0.0,
+      "avg_R@5": 0.0,
+      "avg_time_ms": 0.14
+    },
+    "HRR_keywords": {
+      "avg_P@5": 0.375,
+      "avg_R@5": 0.292,
+      "avg_time_ms": 0.29
+    },
+    "noHRR_natural": {
+      "avg_P@5": 0.0,
+      "avg_R@5": 0.0,
+      "avg_time_ms": 0.05
+    },
+    "noHRR_keywords": {
+      "avg_P@5": 0.375,
+      "avg_R@5": 0.292,
+      "avg_time_ms": 0.07
+    }
+  }
+}

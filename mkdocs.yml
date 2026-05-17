@@ -127,4 +127,5 @@ nav:
       - thoughts/index.md
       - thoughts/algorithm-vs-llm-reasoning.md
       - thoughts/data-driven-correction.md
+      - thoughts/synthetic-vs-real-benchmark.md
   - 🏷️ 标签: tags.md

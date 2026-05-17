@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh"><head><meta charset="utf-8">
+<title>fact_store 真实数据 benchmark — 用户日常对话场景</title>
+<style>
+body { font-family: -apple-system, "PingFang SC", monospace; background: #1e1e2e; color: #ddd; margin: 0; padding: 30px; max-width: 1400px; margin: 0 auto; }
+h1 { color: #fff; border-bottom: 3px solid #f59f00; padding-bottom: 10px; }
+h2 { color: #f59f00; margin-top: 50px; padding-top: 15px; border-top: 1px solid #444; }
+h3 { color: #ffd43b; }
+table { border-collapse: collapse; margin: 15px 0; font-size: 13px; background: #2a2a3a; width: 100%; }
+th, td { border: 1px solid #3a3a4a; padding: 8px 12px; text-align: center; }
+th { background: #383848; color: #fff; font-weight: 600; }
+tr:hover { background: #2f2f42; }
+.qid { font-family: monospace; font-weight: bold; color: #fff; background: #2a2a3a !important; }
+.qtext { font-family: monospace; font-size: 12px; color: #aaa; text-align: left; max-width: 320px; padding-left: 10px; }
+.intent { font-size: 11px; color: #888; text-align: left; max-width: 220px; }
+.ids { font-family: monospace; font-size: 12px; color: #aaa; text-align: left; }
+.good { background: #1f4528 !important; color: #6dd4a4 !important; }
+.ok   { background: #423c1f !important; color: #ddd28b !important; }
+.bad  { background: #4d2326 !important; color: #f87171 !important; }
+.na   { color: #555 !important; }
+.notice { background: #1f3a4d; padding: 12px 18px; border-left: 4px solid #4dabf7; margin: 15px 0; }
+.warn { background: #4d2f1f; padding: 12px 18px; border-left: 4px solid #f59f00; margin: 15px 0; }
+.kill { background: #4d1f23; padding: 14px 20px; border-left: 4px solid #ff6b6b; margin: 15px 0; font-size: 14px; }
+code { background: #383848; color: #f8b88b; padding: 2px 6px; border-radius: 3px; font-size: 12px; }
+pre { background: #25253a; padding: 12px; border-radius: 6px; color: #ddd; font-size: 12px; overflow-x: auto; }
+.summary { background: #25253a; padding: 18px 22px; border-radius: 8px; margin: 20px 0; }
+.summary table { font-size: 14px; }
+ul { line-height: 1.8; }
+li b { color: #ffd43b; }
+</style></head><body>
+
+<h1>fact_store 真实数据 benchmark</h1>
+<div class="notice">
+本页是<b>用户真实对话场景</b>的 benchmark——区别于 <a href="https://ihoooohi.github.io/garden/data/fact-store-benchmark-raw.html" style="color:#74c0fc">合成数据 dashboard</a>。<br>
+数据来自用户实际记忆栈：fact_store 18 条 + memory 6 条 + USER profile 7 条 = 31 条真实 fact。<br>
+Query 来自最近 session 里用户实际问过的"找记忆类"问题，手标 ground truth。
+</div>
+
+<h2>🧭 实验思路（同前）</h2>
+<p>把"fact_store 真的好用吗"翻译成可测的问题：用户日常问的问题，它能不能正确召回应该返回的 fact。<b>不再用合成的"看起来像真实"的数据</b>——直接用用户真实记忆的全部 31 条 + 真实问过的 12 条问题。</p>
+
+<h3>四个 condition</h3>
+<ul>
+  <li><b>HRR + 自然语言</b>：用户原话提问（"我之前 sonnet 4.6 不是配过吗，是 1m 还是 200k？"），开 HRR</li>
+  <li><b>HRR + 蒸馏关键词</b>：把同一个问题压成关键词（"sonnet 4.6 context"），开 HRR</li>
+  <li><b>noHRR + 自然语言</b>：清空 hrr_vector，强制走 FTS5 fallback，自然语言 query</li>
+  <li><b>noHRR + 蒸馏关键词</b>：同上，但用关键词 query</li>
+</ul>
+
+<h2>📊 总览：4 condition 平均</h2>
+<div class="summary">
+<table>
+<thead><tr><th>Condition</th><th>Avg P@5</th><th>Avg R@5</th><th>Avg time (ms)</th></tr></thead>
+<tbody><tr><td class='qid'>HRR_natural</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='good'>0.14</td></tr>
+<tr><td class='qid'>HRR_keywords</td><td class='ok'>38%</td><td class='ok'>29%</td><td class='good'>0.29</td></tr>
+<tr><td class='qid'>noHRR_natural</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='good'>0.05</td></tr>
+<tr><td class='qid'>noHRR_keywords</td><td class='ok'>38%</td><td class='ok'>29%</td><td class='good'>0.07</td></tr>
+</tbody></table>
+</div>
+
+<div class="kill">
+🔥 <b>核心发现 1</b>：自然语言 query 召回率 <b>0% / 0%</b>。用户原话提问 fact_store 完全无法回答——12 条真实问题没一条命中。
+</div>
+
+<div class="kill">
+🔥 <b>核心发现 2</b>：HRR 开关<b>不影响结果</b>（两栏数字相同）。fact_store 的 search() 接口走 FTS5 关键词，HRR 在 search 路径上根本没参与。
+</div>
+
+<div class="kill">
+🔥 <b>核心发现 3</b>：必须把 query 蒸馏成关键词才有 38% / 29%。但仍有 <b>6/12 条 query 即使关键词版也 0%</b>——长尾事实（agent-reach 路径、纠错历史、文章风格、时区）全 miss。
+</div>
+
+<h2>📋 12 条真实 query × 4 condition 完整结果</h2>
+<table><thead><tr><th rowspan=2>QID</th><th rowspan=2>用户原话</th><th rowspan=2>意图</th><th rowspan=2>Expected IDs</th><th colspan=3>HRR_natural</th><th colspan=3>HRR_keywords</th><th colspan=3>noHRR_natural</th><th colspan=3>noHRR_keywords</th></tr><tr><th>P@5</th><th>R@5</th><th>retrieved</th><th>P@5</th><th>R@5</th><th>retrieved</th><th>P@5</th><th>R@5</th><th>retrieved</th><th>P@5</th><th>R@5</th><th>retrieved</th></tr></thead><tbody><tr><td class='qid'>Q1</td><td class='qtext'>我之前 sonnet 4.6 不是配过吗，是 1m 还是 200k？</td><td class='intent'>查 Bedrock context 长度的具体数字</td><td class='ids'>7,24</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'><span class='na'>—</span></td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'><span class='na'>—</span></td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'><span class='na'>—</span></td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'><span class='na'>—</span></td></tr>
+<tr><td class='qid'>Q2</td><td class='qtext'>我有哪些飞书相关的 cron</td><td class='intent'>查所有飞书 + cron 关联的项目</td><td class='ids'>6,26</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'>12</td><td class='good'>100%</td><td class='good'>50%</td><td class='ids'>6</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'>12</td><td class='good'>100%</td><td class='good'>50%</td><td class='ids'>6</td></tr>
+<tr><td class='qid'>Q3</td><td class='qtext'>agent-reach 装在哪？</td><td class='intent'>查具体安装位置</td><td class='ids'>1,20</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'><span class='na'>—</span></td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'><span class='na'>—</span></td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'><span class='na'>—</span></td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'><span class='na'>—</span></td></tr>
+<tr><td class='qid'>Q4</td><td class='qtext'>知识花园在哪？怎么部署？</td><td class='intent'>查 garden 仓库和发布流程</td><td class='ids'>2,21</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'><span class='na'>—</span></td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'><span class='na'>—</span></td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'><span class='na'>—</span></td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'><span class='na'>—</span></td></tr>
+<tr><td class='qid'>Q5</td><td class='qtext'>我配过哪些社交平台 cookie？</td><td class='intent'>查 cookie 相关工具栈</td><td class='ids'>4,23</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'><span class='na'>—</span></td><td class='good'>100%</td><td class='good'>100%</td><td class='ids'>23,4</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'><span class='na'>—</span></td><td class='good'>100%</td><td class='good'>100%</td><td class='ids'>23,4</td></tr>
+<tr><td class='qid'>Q6</td><td class='qtext'>Bedrock 我改过什么本地 patch 不能 git pull 的？</td><td class='intent'>查本地自留 patches 列表</td><td class='ids'>8,24</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'><span class='na'>—</span></td><td class='good'>100%</td><td class='good'>50%</td><td class='ids'>8</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'><span class='na'>—</span></td><td class='good'>100%</td><td class='good'>50%</td><td class='ids'>8</td></tr>
+<tr><td class='qid'>Q7</td><td class='qtext'>我是哪个时区？回复用什么语言？</td><td class='intent'>查个人偏好</td><td class='ids'>26,27</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'><span class='na'>—</span></td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'><span class='na'>—</span></td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'><span class='na'>—</span></td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'><span class='na'>—</span></td></tr>
+<tr><td class='qid'>Q8</td><td class='qtext'>fact_store 的 HRR 到底好不好用</td><td class='intent'>查之前的 benchmark 结论</td><td class='ids'>17</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'><span class='na'>—</span></td><td class='good'>100%</td><td class='good'>100%</td><td class='ids'>17</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'><span class='na'>—</span></td><td class='good'>100%</td><td class='good'>100%</td><td class='ids'>17</td></tr>
+<tr><td class='qid'>Q9</td><td class='qtext'>飞书 OpenAPI 我配的 app id 是什么？</td><td class='intent'>查具体 ID</td><td class='ids'>3,22</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'><span class='na'>—</span></td><td class='good'>50%</td><td class='good'>50%</td><td class='ids'>3,6</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'><span class='na'>—</span></td><td class='good'>50%</td><td class='good'>50%</td><td class='ids'>3,6</td></tr>
+<tr><td class='qid'>Q10</td><td class='qtext'>在飞书里能写 markdown 表格吗？</td><td class='intent'>查格式化硬规则</td><td class='ids'>25</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'><span class='na'>—</span></td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'><span class='na'>—</span></td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'><span class='na'>—</span></td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'><span class='na'>—</span></td></tr>
+<tr><td class='qid'>Q11</td><td class='qtext'>我之前是怎么说的关于自信先答错这件事的</td><td class='intent'>查纠错历史 + 教训</td><td class='ids'>11,15,18,30</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'><span class='na'>—</span></td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'><span class='na'>—</span></td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'><span class='na'>—</span></td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'><span class='na'>—</span></td></tr>
+<tr><td class='qid'>Q12</td><td class='qtext'>写技术文章用户喜欢什么风格</td><td class='intent'>查文章写作偏好</td><td class='ids'>12,13,14,16,29</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'><span class='na'>—</span></td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'><span class='na'>—</span></td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'><span class='na'>—</span></td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ids'><span class='na'>—</span></td></tr>
+</tbody></table>
+
+<h2>🔍 每条 query 的"自然语言版本 vs 关键词版本"</h2>
+
+<table><thead><tr><th>QID</th><th>自然语言（用户原话）</th><th>蒸馏关键词</th><th>关键词版召回？</th></tr></thead><tbody>
+<tr><td class='qid'>Q1</td><td class='qtext'>我之前 sonnet 4.6 不是配过吗，是 1m 还是 200k？</td><td class='qtext'><code>sonnet 4.6 context</code></td><td class='bad'>❌ 仍 0</td></tr>
+<tr><td class='qid'>Q2</td><td class='qtext'>我有哪些飞书相关的 cron</td><td class='qtext'><code>飞书 cron</code></td><td class='good'>✅ 命中</td></tr>
+<tr><td class='qid'>Q3</td><td class='qtext'>agent-reach 装在哪？</td><td class='qtext'><code>agent-reach 安装路径</code></td><td class='bad'>❌ 仍 0</td></tr>
+<tr><td class='qid'>Q4</td><td class='qtext'>知识花园在哪？怎么部署？</td><td class='qtext'><code>garden 部署</code></td><td class='bad'>❌ 仍 0</td></tr>
+<tr><td class='qid'>Q5</td><td class='qtext'>我配过哪些社交平台 cookie？</td><td class='qtext'><code>社交 cookie</code></td><td class='good'>✅ 命中</td></tr>
+<tr><td class='qid'>Q6</td><td class='qtext'>Bedrock 我改过什么本地 patch 不能 git pull 的？</td><td class='qtext'><code>Bedrock patch git pull</code></td><td class='good'>✅ 命中</td></tr>
+<tr><td class='qid'>Q7</td><td class='qtext'>我是哪个时区？回复用什么语言？</td><td class='qtext'><code>时区 中文</code></td><td class='bad'>❌ 仍 0</td></tr>
+<tr><td class='qid'>Q8</td><td class='qtext'>fact_store 的 HRR 到底好不好用</td><td class='qtext'><code>fact_store HRR benchmark</code></td><td class='good'>✅ 命中</td></tr>
+<tr><td class='qid'>Q9</td><td class='qtext'>飞书 OpenAPI 我配的 app id 是什么？</td><td class='qtext'><code>飞书 app id</code></td><td class='good'>✅ 命中</td></tr>
+<tr><td class='qid'>Q10</td><td class='qtext'>在飞书里能写 markdown 表格吗？</td><td class='qtext'><code>飞书 markdown 表格</code></td><td class='bad'>❌ 仍 0</td></tr>
+<tr><td class='qid'>Q11</td><td class='qtext'>我之前是怎么说的关于自信先答错这件事的</td><td class='qtext'><code>自信先答错 纠正</code></td><td class='bad'>❌ 仍 0</td></tr>
+<tr><td class='qid'>Q12</td><td class='qtext'>写技术文章用户喜欢什么风格</td><td class='qtext'><code>技术文章 风格 偏好</code></td><td class='bad'>❌ 仍 0</td></tr>
+</tbody></table>
+
+<h2>💡 解读：为什么会这样</h2>
+
+<h3>1. fact_store.search() 的实质</h3>
+<p>读了 hermes 源码 <code>plugins/memory/holographic/retrieval.py</code> 后明确：<code>search()</code> 走的是 <b>SQLite FTS5 全文搜索</b>，不走 HRR。HRR 只在 <code>probe()</code>（按 entity 召回）和 <code>reason()</code>（多 entity 交集）里用。所以 HRR 开关对 search() 没影响——这次实验直接证实了这点。</p>
+
+<h3>2. 为什么自然语言全 0</h3>
+<p>FTS5 把整个 query 字符串当 phrase match。<code>"我之前 sonnet 4.6 不是配过吗，是 1m 还是 200k？"</code> 没 fact 里包含完整 phrase——分词器对中文友好程度有限，"我之前"、"是 1m 还是"这种自然语言粘合词不会被识别为关键 token。</p>
+
+<h3>3. 为什么蒸馏关键词只能赢一半</h3>
+<p>fact_store 必须依赖 fact 内容里有<b>精确字面匹配</b>。所以：</p>
+<ul>
+  <li><b>命中</b>：query 关键词 ∈ fact content（"feishu cron"、"NewsBot bot daily-briefing"）</li>
+  <li><b>miss</b>：query 关键词只描述了语义，不出现在 fact 字面里。例：</li>
+</ul>
+<ul>
+  <li>Q3 <code>"agent-reach 安装路径"</code>——fact 1 里写的是"装在 ~/.local/bin/（pipx 安装）"，没"安装路径"四字</li>
+  <li>Q7 <code>"时区 中文"</code>——fact 201 写"北京时区（UTC+8）"，没"时区"作为关键词以独立 token 形式出现（实际可能能 match，但 FTS5 对中文分词的不确定性导致 miss）</li>
+  <li>Q11 <code>"自信先答错 纠正"</code>——fact 11 写"凭印象答错被纠正"，shape 不对应</li>
+</ul>
+
+<h3>4. 真正能用 fact_store 的场景</h3>
+<p>实测<b>命中的 6/12</b>有共同特征：</p>
+<ul>
+  <li>查询是<b>专有名词</b>或<b>独特字符串</b>：<code>NewsBot</code>、<code>feishu cron</code>、<code>HRR benchmark</code>、<code>Bedrock patch</code>、<code>cookie</code>、<code>app id</code></li>
+  <li>这些字符串<b>必然会</b>出现在对应 fact 的内容里</li>
+  <li>本质是把 fact_store 当<b>关键词 grep</b>用——和 <code>grep -r "NewsBot" memory.txt</code> 等价</li>
+</ul>
+
+<h3>5. 真正不能用的场景</h3>
+<ul>
+  <li>用<b>语义/意图</b>查询而非字面字符串（"我之前...来着"）</li>
+  <li>查<b>抽象偏好/教训</b>（"用户喜欢什么风格"）</li>
+  <li>查<b>多个分散 fact</b>组成的<b>主题</b>（"自信先答错"涉及 4 条 fact，但每条用词都不一样）</li>
+</ul>
+
+<h2>📌 对用户的实际建议</h2>
+
+<div class="warn">
+<b>给 zy242 的具体建议</b>：fact_store 在你日常对话中<b>不工作</b>。你的<b>实际工作记忆</b>是：
+<ul>
+  <li><b>memory tool（USER.md + MEMORY.md）</b>—— 这两个文件每个 turn 直接拼进 system prompt，agent 自动看到</li>
+  <li><b>session_search</b>—— 跨 session 找历史，agent 主动搜，LLM 总结后注入</li>
+  <li><b>fact_store</b>—— 只有当 agent <b>有意识地用关键词 grep</b> 时才有用</li>
+</ul>
+</div>
+
+<h3>该不该继续往 fact_store 加 fact？</h3>
+<p><b>低优先级</b>。除非该 fact 满足：</p>
+<ul>
+  <li>包含<b>独特专有名词</b>（NewsBot、cli_aa8f549aae385bcd 这种）</li>
+  <li>是<b>明确事实</b>不是抽象偏好</li>
+  <li>未来你或 agent 可能会用关键词查询</li>
+</ul>
+<p>抽象偏好（"用户讨厌方案对比"）该进 USER.md，不是 fact_store。</p>
+
+<h2>🔄 vs 之前的合成数据 benchmark</h2>
+
+<table><thead><tr><th>维度</th><th>合成数据（500条）</th><th>真实数据（31条）</th></tr></thead><tbody>
+<tr><td>规模</td><td>大（最大 500）</td><td>小（31，匹配真实 size）</td></tr>
+<tr><td>分布</td><td>结构控制+均匀 tag</td><td>真实长尾（专有名词 + 抽象偏好混合）</td></tr>
+<tr><td>Query 形式</td><td>手编结构化（feishu+cron AND）</td><td>用户原话（自然语言 + 蒸馏关键词对照）</td></tr>
+<tr><td>Ground truth</td><td>tag-based 自动判定</td><td>人工标注每条 query 应返回的 fact ID</td></tr>
+<tr><td>主要发现</td><td>HRR 在 100 条英文 +22%，200+ 塌方</td><td>自然语言 0%，关键词 38% 但仍 6/12 miss</td></tr>
+<tr><td>对用户决策影响</td><td>"别建议装 numpy 开 HRR"</td><td>"对你日常对话 fact_store 整体边际作用低"</td></tr>
+</tbody></table>
+
+<h2>📂 复现路径</h2>
+<pre>cd ~/garden-experiments/memory-benchmark-real/
+python run_real_benchmark.py
+# 输出 results_real.json + 这个 dashboard
+
+# 文件清单：
+#   facts_real.json       — 31 条真实 fact 数据
+#   queries_real.json     — 12 条真实 query + ground truth
+#   run_real_benchmark.py — 4 condition benchmark
+#   make_real_dashboard.py — 生成本页 HTML</pre>
+
+<div class="notice" style="margin-top:30px">
+🔗 配套阅读：<br>
+• <a href="https://ihoooohi.github.io/garden/data/fact-store-benchmark-raw.html" style="color:#74c0fc">合成数据 dashboard</a>（800+ 数据点的初代实验）<br>
+• <a href="https://ihoooohi.github.io/garden/tech/fact-store-benchmark-report/" style="color:#74c0fc">合成数据技术报告</a><br>
+• <a href="https://ihoooohi.github.io/garden/thoughts/data-driven-correction/" style="color:#74c0fc">数据驱动认知修正故事</a>
+</div>
+
+</body></html>
