@@ -18,6 +18,11 @@ tags:
     终点：跑完 benchmark 才发现——**HRR 在 <100 条英文 fact 上有真实优势，但其他场景全部塌方；contradict 在所有规模/语言下都不工作**。
     这不是技术故事，是**思考方法的故事**。
 
+!!! tip "📊 完整原始数据"
+    本文讲故事和思考过程，**所有支撑数据**在这里：[**fact-store benchmark dashboard**](../data/fact-store-benchmark-raw.html)（可视化全部原始数据）
+    
+    技术报告版：[fact-store-benchmark-report](../tech/fact-store-benchmark-report.md)（实验设计 + 公式 + 复现脚本）
+
 ---
 
 ## 起点：一次自信的演示

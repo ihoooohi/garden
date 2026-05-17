@@ -19,6 +19,17 @@ tags:
     
     **故事/思考过程**版本见 [当我用数据怀疑自己的判断时](../thoughts/data-driven-correction.md)。
 
+!!! tip "📊 全部原始数据"
+    本文是描述性报告。**所有数据的可视化入口** 在这里：[**fact-store benchmark dashboard**](../data/fact-store-benchmark-raw.html)
+    
+    包含 12-condition 完整矩阵、HRR vs noHRR 净增益表、Q1 召回率折线图、平均 Recall 条形图、每查询 top-10 召回 fact_id、14 个 contradict case 详细。颜色编码（🟢好 / 🟡中 / 🔴差）。
+    
+    也可直接访问 raw JSON / CSV：
+    
+    - [`scaled_benchmark.json`](../data/scaled_benchmark.json) — 12-condition raw 数据
+    - [`scaled_matrix.csv`](../data/scaled_matrix.csv) — 72 行 CSV，可导入 Excel/pandas
+    - [`contradict_all_cases.csv`](../data/contradict_all_cases.csv) — 14 case 数据
+
 ---
 
 ## 1. 实验目标
