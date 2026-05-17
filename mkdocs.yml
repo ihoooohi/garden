@@ -124,4 +124,5 @@ nav:
       - interview/vector-db-milvus.md
   - 💭 思考与随笔:
       - thoughts/index.md
+      - thoughts/algorithm-vs-llm-reasoning.md
   - 🏷️ 标签: tags.md
