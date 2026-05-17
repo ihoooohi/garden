@@ -9,4 +9,5 @@ description: 学术、生活、关于自己
 
 ## 文章列表
 
+- [当我用数据怀疑自己的判断时 — 一次完整的认知更新过程](data-driven-correction.md)（2026-05-17）
 - [能用算法解决的不要靠模型推理 — AI Agent 工程的一个根本认知](algorithm-vs-llm-reasoning.md)（2026-05-17）

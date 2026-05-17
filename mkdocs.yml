@@ -116,6 +116,7 @@ nav:
       - tech/hermes-team-deployment.md
       - tech/hermes-multi-profile.md
       - tech/hermes-memory-stack.md
+      - tech/fact-store-benchmark-report.md
       - tech/web-scraping-toolchain.md
   - 💼 面试题集:
       - interview/index.md
@@ -125,4 +126,5 @@ nav:
   - 💭 思考与随笔:
       - thoughts/index.md
       - thoughts/algorithm-vs-llm-reasoning.md
+      - thoughts/data-driven-correction.md
   - 🏷️ 标签: tags.md
