@@ -37,6 +37,79 @@ code { background: #383848; color: #f8b88b; padding: 2px 6px; border-radius: 3px
 故事版见 <a href="https://ihoooohi.github.io/garden/thoughts/data-driven-correction/" style="color:#74c0fc">thoughts/data-driven-correction</a>。
 </div>
 
+<h2>🧭 实验思路</h2>
+
+<p><b>整体思路一句话</b>：模拟一个真实用户的记忆场景，看 fact_store 在这个场景里能不能正确回答问题。</p>
+
+<p>把"是不是好用"这个模糊问题拆成两个具体的东西：</p>
+<ul>
+  <li><b>fact 集</b>——"它已经记住的事"</li>
+  <li><b>query 集</b>——"被问到的问题"</li>
+</ul>
+<p>然后<b>人工标注每个问题正确答案应该是哪几条 fact</b>（这就是 ground truth），最后跑 <code>fact_store.search()</code>，对比"它返回的"和"正确的"差多少。</p>
+
+<h3>六步流程</h3>
+
+<h4>第一步：造 fact 集（"它记住了什么"）</h4>
+<p>编一组听起来像真人会存的事实，比如"用户偏好用 Sonnet 4.6"、"主机是 zy242"、"用户在北京时区"……第一轮 20 条手编，后续自动合成 100 / 200 / 500 三档规模。每条用 <code>fact_store.add()</code> 真写进数据库。中文 + 英文各一份，因为怀疑中文会差（事后证实）。</p>
+
+<h4>第二步：造 query 集 + 标 ground truth（核心）</h4>
+<p>每个 query 是真实场景下会问的问题，比如：</p>
+<ul>
+  <li>Q1: "用户用什么模型？" → 应该返回那条 Sonnet 4.6 fact</li>
+  <li>Q2: "项目部署在哪？" → 应该返回那条 mkdocs / GitHub Pages fact</li>
+  <li>Q3: "用户在哪个时区？" → 应该返回那条北京时间 fact</li>
+</ul>
+<p><b>关键</b>：每个 query 手动标了 ground truth——"这个问题正确应该返回哪几条 fact ID"。这是评测的根基，没它就只能"看起来对不对"，那是定性不是定量。</p>
+
+<pre style="background:#25253a;padding:12px;border-radius:6px;color:#ddd;font-size:12px">{
+  "query": "用户用什么模型？",
+  "expected_fact_ids": [3, 7]
+}</pre>
+
+<h4>第三步：跑 search，对比答案</h4>
+<p>每个 query 喂给 <code>fact_store.search()</code>，它返回 top-k。算两个指标：</p>
+<ul>
+  <li><b>Precision</b>（精度）：返回的 5 条里，几条是对的</li>
+  <li><b>Recall</b>（召回）：应该返回的 N 条里，找到了几条</li>
+</ul>
+<p>举例：返回 [3,7,12,9,5]、ground truth [3,7] → P=2/5=40%，R=2/2=100%。</p>
+
+<h4>第四步：四象限 + 规模扫描</h4>
+<p>光测一组没用，要看变量影响。最初跑了四象限：</p>
+<pre style="background:#25253a;padding:12px;border-radius:6px;color:#ddd;font-size:12px">              中文 fact    英文 fact
+HRR 开           A           B
+HRR 关           C           D</pre>
+<p>后来加规模轴：20 / 100 / 200 / 500 → 共 <b>12 个 condition</b>（你在下面矩阵里看到的就是这个）。</p>
+
+<h4>第五步：contradict 单独测（带负样本）</h4>
+<p><code>contradict</code> 是 fact_store 的"找矛盾"功能。专门造了 14 对：</p>
+<ul>
+  <li>7 对<b>真矛盾</b>："用户用 Opus" vs "用户从不用 Opus"——score 应该高</li>
+  <li>7 对<b>负样本</b>（看起来像但不矛盾）："项目用 Python" vs "用户喜欢 Python"——score 应该低</li>
+</ul>
+<p>实测：真矛盾平均分 0.220，负样本平均分 0.239——<b>比真矛盾还高</b>。这就是为什么它在我场景下基本不工作。<b>没有负样本就发现不了这个问题</b>，只测真矛盾会误以为"它能识别"。</p>
+
+<h4>第六步：可视化（就是这一页）</h4>
+<p>72 个 condition × 6 query × 2 指标 = 800+ 个数字，光看 JSON 谁都晕。HTML dashboard 颜色编码（🟢🟡🔴），一眼能看出哪个塌方。</p>
+
+<h3>关键设计决策</h3>
+<ol>
+  <li><b>ground truth 必须人工标</b>。没这个就只能凭感觉评估，凭感觉等于没评估。每条 query 自己想"真合理的答案是什么"，标完才跑实验。</li>
+  <li><b>必须有负样本</b>。contradict 那部分只测真矛盾时看起来还行，加了负样本立刻发现"对所有看似相关的事都给高分，没区分能力"。</li>
+  <li><b>必须扩到大规模</b>。20 条上测出"HRR 没用"是不公平的。100 / 200 / 500 跑完才发现 HRR 在 100 条英文场景<b>真的赢 22%</b>，但 200+ 塌方。这把"HRR 完全没用"修正成"HRR 适用区间窄"。</li>
+  <li><b>中英对照</b>。没拆中英前以为"HRR 普遍有问题"，拆完才发现中文比英文还差一档——entity 抽取的 regex 是全英文写死的。</li>
+  <li><b>P/R 评估有 bug 要修</b>。第一版犯了个错：先 top-k 截断、再算 P/R，导致 P 永远 ≤ 100%。修了之后数字才对。这种 bug 不修结论全错。</li>
+</ol>
+
+<h3>为什么这套有说服力</h3>
+<p><b>它能被任何人复现</b>。所有数据集、脚本、ground truth 标注都在 <code>~/garden-experiments/memory-benchmark/</code>，公开 push 到 GitHub。任何人对结论存疑，跑一遍就能验证。这就是"基于数据"的真实含义——<b>不是引用了一个 paper、不是 vibe check 几个 case，是有完整的实验设计 + 公开的可复现实施 + 标注好的 ground truth</b>。</p>
+
+<div class="notice" style="margin-top:30px">
+↓ 下面是这套方法跑出来的<b>所有原始数字</b>，已按 condition × query 排好。颜色编码标好了好/中/差。<br>
+任何怀疑都可以从这里直接验证。
+</div>
+
 <h2>📊 主实验：12-condition 完整矩阵</h2>
 <p>3 规模 (100/200/500) × 2 语言 (zh/en) × 2 HRR 状态 (开/关) × 6 类查询。</p>
 
