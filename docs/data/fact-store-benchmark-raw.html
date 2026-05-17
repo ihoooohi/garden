@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh"><head><meta charset="utf-8">
+<title>fact_store HRR benchmark — 全部原始数据</title>
+<style>
+body { font-family: -apple-system, "PingFang SC", monospace; background: #1e1e2e; color: #ddd; margin: 0; padding: 30px; max-width: 1600px; margin: 0 auto; }
+h1 { color: #fff; border-bottom: 3px solid #4dabf7; padding-bottom: 10px; }
+h2 { color: #4dabf7; margin-top: 50px; padding-top: 15px; border-top: 1px solid #444; }
+h3 { color: #74c0fc; }
+h4 { color: #aaa; margin-top: 30px; }
+table { border-collapse: collapse; margin: 15px 0; font-size: 12px; background: #2a2a3a; }
+th, td { border: 1px solid #3a3a4a; padding: 6px 10px; text-align: center; }
+th { background: #383848; color: #fff; font-weight: 600; }
+tr:hover { background: #2f2f42; }
+.cond { font-family: monospace; font-weight: bold; color: #fff; background: #2a2a3a !important; }
+.ids { font-family: monospace; font-size: 11px; color: #aaa; text-align: left; max-width: 300px; }
+.good { background: #1f4528 !important; color: #6dd4a4 !important; }
+.ok   { background: #423c1f !important; color: #ddd28b !important; }
+.bad  { background: #4d2326 !important; color: #f87171 !important; }
+.na   { color: #555 !important; }
+details { margin: 20px 0; padding: 15px; background: #25253a; border-radius: 8px; }
+summary { cursor: pointer; color: #4dabf7; font-weight: bold; padding: 8px 0; }
+.chart { display: block; margin: 20px auto; background: #1e1e2e; }
+.matrix { width: 100%; }
+.delta { width: 100%; }
+.detail { font-size: 11px; }
+.notice { background: #1f3a4d; padding: 12px 18px; border-left: 4px solid #4dabf7; margin: 15px 0; }
+.warn { background: #4d2f1f; padding: 12px 18px; border-left: 4px solid #f59f00; margin: 15px 0; }
+code { background: #383848; color: #f8b88b; padding: 2px 6px; border-radius: 3px; font-size: 12px; }
+.dl-link { display: inline-block; padding: 6px 12px; background: #2a3a4a; color: #74c0fc; text-decoration: none; margin: 5px; border-radius: 4px; }
+.dl-link:hover { background: #3a4a5a; }
+</style></head><body>
+
+<h1>fact_store HRR benchmark — 全部原始数据</h1>
+
+<div class="notice">
+本页是所有实验数据的一站式视图。报告版见 <a href="https://ihoooohi.github.io/garden/tech/fact-store-benchmark-report/" style="color:#74c0fc">tech/fact-store-benchmark-report</a>。
+故事版见 <a href="https://ihoooohi.github.io/garden/thoughts/data-driven-correction/" style="color:#74c0fc">thoughts/data-driven-correction</a>。
+</div>
+
+<h2>📊 主实验：12-condition 完整矩阵</h2>
+<p>3 规模 (100/200/500) × 2 语言 (zh/en) × 2 HRR 状态 (开/关) × 6 类查询。</p>
+
+<h3>每个 condition × 每个 query 的 Precision / Recall / 时间</h3>
+<div class="notice">颜色编码：<span class="good" style="padding:2px 8px">绿色 = 好</span>
+<span class="ok" style="padding:2px 8px;margin-left:10px">黄色 = 中</span>
+<span class="bad" style="padding:2px 8px;margin-left:10px">红色 = 差</span>
+（P 红=&lt;20%，绿=≥50%；时间红=≥10ms，绿=&lt;1ms）</div>
+
+<table class='matrix'>
+<thead><tr>
+<th rowspan=2>Condition</th>
+<th rowspan=2>Avg P</th><th rowspan=2>Avg R</th><th rowspan=2>Avg time(ms)</th>
+<th colspan=3>Q1: 飞书+cron AND</th>
+<th colspan=3>Q2: bedrock+cron AND</th>
+<th colspan=3>Q3: 飞书 probe</th>
+<th colspan=3>Q4: contradict</th>
+<th colspan=3>Q5: NewsBot 精确</th>
+<th colspan=3>Q6: cron 模糊</th>
+</tr><tr>
+<th>P</th><th>R</th><th>time(ms)</th>
+<th>P</th><th>R</th><th>time(ms)</th>
+<th>P</th><th>R</th><th>time(ms)</th>
+<th>P</th><th>R</th><th>time(ms)</th>
+<th>P</th><th>R</th><th>time(ms)</th>
+<th>P</th><th>R</th><th>time(ms)</th>
+</tr></thead><tbody>
+<tr><td class='cond'>100_zh_HRR</td><td class='bad'>7%</td><td class='bad'>8%</td><td class='bad'>24.23</td><td class='ok'>20%</td><td class='ok'>40%</td><td class='ok'>8.64</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ok'>8.24</td><td class='ok'>20%</td><td class='bad'>7%</td><td class='bad'>108.95</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='bad'>19.30</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='good'>0.15</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='good'>0.11</td></tr>
+<tr><td class='cond'>100_zh_noHRR</td><td class='bad'>17%</td><td class='bad'>6%</td><td class='good'>0.10</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='good'>0.14</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='good'>0.04</td><td class='good'>100%</td><td class='ok'>33%</td><td class='good'>0.33</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='good'>0.00</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='good'>0.04</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='good'>0.04</td></tr>
+<tr><td class='cond'>100_en_HRR</td><td class='ok'>23%</td><td class='ok'>27%</td><td class='bad'>23.97</td><td class='ok'>30%</td><td class='good'>60%</td><td class='ok'>8.35</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ok'>8.00</td><td class='bad'>10%</td><td class='bad'>3%</td><td class='bad'>120.21</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='ok'>4.43</td><td class='good'>100%</td><td class='good'>100%</td><td class='ok'>2.69</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='good'>0.12</td></tr>
+<tr><td class='cond'>100_en_noHRR</td><td class='bad'>17%</td><td class='bad'>6%</td><td class='good'>0.13</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='good'>0.22</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='good'>0.13</td><td class='good'>100%</td><td class='ok'>33%</td><td class='good'>0.28</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='good'>0.00</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='good'>0.08</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='good'>0.05</td></tr>
+<tr><td class='cond'>200_zh_HRR</td><td class='bad'>8%</td><td class='bad'>1%</td><td class='bad'>56.62</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='bad'>16.59</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='bad'>15.97</td><td class='good'>50%</td><td class='bad'>8%</td><td class='bad'>223.08</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='bad'>83.77</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='good'>0.18</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='good'>0.12</td></tr>
+<tr><td class='cond'>200_zh_noHRR</td><td class='bad'>17%</td><td class='bad'>3%</td><td class='good'>0.15</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='good'>0.26</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='good'>0.06</td><td class='good'>100%</td><td class='bad'>17%</td><td class='good'>0.46</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='good'>0.01</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='good'>0.05</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='good'>0.07</td></tr>
+<tr><td class='cond'>200_en_HRR</td><td class='ok'>27%</td><td class='ok'>24%</td><td class='bad'>50.25</td><td class='ok'>40%</td><td class='ok'>40%</td><td class='bad'>16.14</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='bad'>16.13</td><td class='ok'>20%</td><td class='bad'>3%</td><td class='bad'>246.20</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='bad'>17.88</td><td class='good'>100%</td><td class='good'>100%</td><td class='ok'>5.05</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='good'>0.12</td></tr>
+<tr><td class='cond'>200_en_noHRR</td><td class='good'>67%</td><td class='good'>53%</td><td class='good'>0.27</td><td class='good'>100%</td><td class='good'>100%</td><td class='good'>0.44</td><td class='good'>100%</td><td class='good'>100%</td><td class='good'>0.22</td><td class='good'>100%</td><td class='bad'>17%</td><td class='good'>0.55</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='good'>0.01</td><td class='good'>100%</td><td class='good'>100%</td><td class='good'>0.31</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='good'>0.08</td></tr>
+<tr><td class='cond'>500_zh_HRR</td><td class='bad'>7%</td><td class='bad'>0%</td><td class='bad'>197.13</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='bad'>47.66</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='bad'>42.18</td><td class='ok'>40%</td><td class='bad'>3%</td><td class='bad'>580.51</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='bad'>512.00</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='good'>0.31</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='good'>0.14</td></tr>
+<tr><td class='cond'>500_zh_noHRR</td><td class='good'>50%</td><td class='bad'>14%</td><td class='good'>0.32</td><td class='good'>100%</td><td class='ok'>40%</td><td class='good'>0.43</td><td class='good'>100%</td><td class='ok'>40%</td><td class='good'>0.33</td><td class='good'>100%</td><td class='bad'>7%</td><td class='ok'>1.03</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='good'>0.01</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='good'>0.05</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='good'>0.07</td></tr>
+<tr><td class='cond'>500_en_HRR</td><td class='ok'>27%</td><td class='bad'>11%</td><td class='bad'>137.77</td><td class='good'>60%</td><td class='ok'>24%</td><td class='bad'>40.69</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='bad'>39.15</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='bad'>630.82</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='bad'>104.28</td><td class='good'>100%</td><td class='ok'>40%</td><td class='bad'>11.55</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='good'>0.15</td></tr>
+<tr><td class='cond'>500_en_noHRR</td><td class='good'>67%</td><td class='ok'>21%</td><td class='good'>0.42</td><td class='good'>100%</td><td class='ok'>40%</td><td class='good'>0.51</td><td class='good'>100%</td><td class='ok'>40%</td><td class='good'>0.31</td><td class='good'>100%</td><td class='bad'>7%</td><td class='ok'>1.23</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='good'>0.01</td><td class='good'>100%</td><td class='ok'>40%</td><td class='good'>0.39</td><td class='bad'>0%</td><td class='bad'>0%</td><td class='good'>0.08</td></tr>
+</tbody></table>
+
+<h3>HRR vs noHRR 净增益（按规模 × 语言聚合）</h3>
+<table class='delta'>
+<thead><tr><th>规模</th><th>语言</th><th>HRR Recall</th><th>noHRR Recall</th><th>R 差</th><th>HRR Time(ms)</th><th>noHRR Time(ms)</th><th>时间倍率</th></tr></thead><tbody>
+<tr><td>100</td><td>zh</td><td class='bad'>8%</td><td class='bad'>6%</td><td class='ok'>+2%</td><td>24.23</td><td>0.10</td><td class='bad'>246x</td></tr>
+<tr><td>100</td><td>en</td><td class='ok'>27%</td><td class='bad'>6%</td><td class='good'>+22%</td><td>23.97</td><td>0.13</td><td class='bad'>189x</td></tr>
+<tr><td>200</td><td>zh</td><td class='bad'>1%</td><td class='bad'>3%</td><td class='ok'>-1%</td><td>56.62</td><td>0.15</td><td class='bad'>373x</td></tr>
+<tr><td>200</td><td>en</td><td class='ok'>24%</td><td class='good'>53%</td><td class='bad'>-29%</td><td>50.25</td><td>0.27</td><td class='bad'>187x</td></tr>
+<tr><td>500</td><td>zh</td><td class='bad'>0%</td><td class='bad'>14%</td><td class='bad'>-14%</td><td>197.13</td><td>0.32</td><td class='bad'>616x</td></tr>
+<tr><td>500</td><td>en</td><td class='bad'>11%</td><td class='ok'>21%</td><td class='bad'>-10%</td><td>137.77</td><td>0.42</td><td class='bad'>327x</td></tr>
+</tbody></table>
+
+<h3>📈 Q1 召回率随规模变化（折线图）</h3>
+<svg width="700" height="320" viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg" class="chart">
+<rect width="700" height="320" fill="#1e1e2e"/>
+<line x1="80" y1="280" x2="650" y2="280" stroke="#3a3a4a" stroke-width="1"/>
+<text x="65" y="285" fill="#888" font-size="11" text-anchor="end">0%</text>
+<line x1="80" y1="230" x2="650" y2="230" stroke="#3a3a4a" stroke-width="1"/>
+<text x="65" y="235" fill="#888" font-size="11" text-anchor="end">20%</text>
+<line x1="80" y1="180" x2="650" y2="180" stroke="#3a3a4a" stroke-width="1"/>
+<text x="65" y="185" fill="#888" font-size="11" text-anchor="end">40%</text>
+<line x1="80" y1="130" x2="650" y2="130" stroke="#3a3a4a" stroke-width="1"/>
+<text x="65" y="135" fill="#888" font-size="11" text-anchor="end">60%</text>
+<line x1="80" y1="80" x2="650" y2="80" stroke="#3a3a4a" stroke-width="1"/>
+<text x="65" y="85" fill="#888" font-size="11" text-anchor="end">80%</text>
+<line x1="80" y1="30" x2="650" y2="30" stroke="#3a3a4a" stroke-width="1"/>
+<text x="65" y="35" fill="#888" font-size="11" text-anchor="end">100%</text>
+<line x1="80.0" y1="30" x2="80.0" y2="280" stroke="#3a3a4a" stroke-width="1"/>
+<text x="80.0" y="300" fill="#aaa" font-size="11" text-anchor="middle">100 条</text>
+<line x1="220.0" y1="30" x2="220.0" y2="280" stroke="#3a3a4a" stroke-width="1"/>
+<text x="220.0" y="300" fill="#aaa" font-size="11" text-anchor="middle">200 条</text>
+<line x1="640.0" y1="30" x2="640.0" y2="280" stroke="#3a3a4a" stroke-width="1"/>
+<text x="640.0" y="300" fill="#aaa" font-size="11" text-anchor="middle">500 条</text>
+<text x="400" y="20" fill="#fff" font-size="14" text-anchor="middle">Q1 召回率随规模变化（双实体 AND 查询: feishu+cron）</text>
+<path d="M 80.0,180.0 L 220.0,280.0 L 640.0,280.0" stroke="#ff6b6b" stroke-width="2.5" fill="none"/>
+<circle cx="80.0" cy="180.0" r="4" fill="#ff6b6b"/>
+<text x="80.0" y="172.0" fill="#ff6b6b" font-size="10" text-anchor="middle">40%</text>
+<circle cx="220.0" cy="280.0" r="4" fill="#ff6b6b"/>
+<text x="220.0" y="272.0" fill="#ff6b6b" font-size="10" text-anchor="middle">0%</text>
+<circle cx="640.0" cy="280.0" r="4" fill="#ff6b6b"/>
+<text x="640.0" y="272.0" fill="#ff6b6b" font-size="10" text-anchor="middle">0%</text>
+<text x="660" y="35" fill="#ff6b6b" font-size="11">— 中_HRR</text>
+<path d="M 80.0,280.0 L 220.0,280.0 L 640.0,180.0" stroke="#fab1a0" stroke-width="2.5" fill="none"/>
+<circle cx="80.0" cy="280.0" r="4" fill="#fab1a0"/>
+<text x="80.0" y="272.0" fill="#fab1a0" font-size="10" text-anchor="middle">0%</text>
+<circle cx="220.0" cy="280.0" r="4" fill="#fab1a0"/>
+<text x="220.0" y="272.0" fill="#fab1a0" font-size="10" text-anchor="middle">0%</text>
+<circle cx="640.0" cy="180.0" r="4" fill="#fab1a0"/>
+<text x="640.0" y="172.0" fill="#fab1a0" font-size="10" text-anchor="middle">40%</text>
+<text x="660" y="51" fill="#fab1a0" font-size="11">— 中_noHRR</text>
+<path d="M 80.0,130.0 L 220.0,180.0 L 640.0,220.0" stroke="#4dabf7" stroke-width="2.5" fill="none"/>
+<circle cx="80.0" cy="130.0" r="4" fill="#4dabf7"/>
+<text x="80.0" y="122.0" fill="#4dabf7" font-size="10" text-anchor="middle">60%</text>
+<circle cx="220.0" cy="180.0" r="4" fill="#4dabf7"/>
+<text x="220.0" y="172.0" fill="#4dabf7" font-size="10" text-anchor="middle">40%</text>
+<circle cx="640.0" cy="220.0" r="4" fill="#4dabf7"/>
+<text x="640.0" y="212.0" fill="#4dabf7" font-size="10" text-anchor="middle">24%</text>
+<text x="660" y="67" fill="#4dabf7" font-size="11">— 英_HRR</text>
+<path d="M 80.0,280.0 L 220.0,30.0 L 640.0,180.0" stroke="#74c0fc" stroke-width="2.5" fill="none"/>
+<circle cx="80.0" cy="280.0" r="4" fill="#74c0fc"/>
+<text x="80.0" y="272.0" fill="#74c0fc" font-size="10" text-anchor="middle">0%</text>
+<circle cx="220.0" cy="30.0" r="4" fill="#74c0fc"/>
+<text x="220.0" y="22.0" fill="#74c0fc" font-size="10" text-anchor="middle">100%</text>
+<circle cx="640.0" cy="180.0" r="4" fill="#74c0fc"/>
+<text x="640.0" y="172.0" fill="#74c0fc" font-size="10" text-anchor="middle">40%</text>
+<text x="660" y="83" fill="#74c0fc" font-size="11">— 英_noHRR</text>
+</svg>
+
+<h3>📊 12 个 Condition 平均 Recall 横向对比</h3>
+<svg width="700" height="500" viewBox="0 0 700 500" xmlns="http://www.w3.org/2000/svg" class="chart">
+<rect width="700" height="500" fill="#1e1e2e"/>
+<text x="350" y="20" fill="#fff" font-size="14" text-anchor="middle">12 个 Condition 平均 Recall (跨 6 类查询)</text>
+<text x="100" y="68" fill="#ddd" font-size="11" text-anchor="end">100_zh_HRR</text>
+<rect x="110" y="50" width="38.88888888888889" height="28" fill="#ff6b6b" opacity="0.85"/>
+<text x="158.88888888888889" y="68" fill="#fff" font-size="11">7.8%</text>
+<text x="100" y="101" fill="#ddd" font-size="11" text-anchor="end">100_zh_noHRR</text>
+<rect x="110" y="83" width="27.777777777777775" height="28" fill="#4dabf7" opacity="0.85"/>
+<text x="147.77777777777777" y="101" fill="#fff" font-size="11">5.6%</text>
+<text x="100" y="134" fill="#ddd" font-size="11" text-anchor="end">100_en_HRR</text>
+<rect x="110" y="116" width="136.1111111111111" height="28" fill="#ff6b6b" opacity="0.85"/>
+<text x="256.1111111111111" y="134" fill="#fff" font-size="11">27.2%</text>
+<text x="100" y="167" fill="#ddd" font-size="11" text-anchor="end">100_en_noHRR</text>
+<rect x="110" y="149" width="27.777777777777775" height="28" fill="#4dabf7" opacity="0.85"/>
+<text x="147.77777777777777" y="167" fill="#fff" font-size="11">5.6%</text>
+<text x="100" y="200" fill="#ddd" font-size="11" text-anchor="end">200_zh_HRR</text>
+<rect x="110" y="182" width="6.944444444444444" height="28" fill="#ff6b6b" opacity="0.85"/>
+<text x="126.94444444444444" y="200" fill="#fff" font-size="11">1.4%</text>
+<text x="100" y="233" fill="#ddd" font-size="11" text-anchor="end">200_zh_noHRR</text>
+<rect x="110" y="215" width="13.888888888888888" height="28" fill="#4dabf7" opacity="0.85"/>
+<text x="133.88888888888889" y="233" fill="#fff" font-size="11">2.8%</text>
+<text x="100" y="266" fill="#ddd" font-size="11" text-anchor="end">200_en_HRR</text>
+<rect x="110" y="248" width="119.44444444444446" height="28" fill="#ff6b6b" opacity="0.85"/>
+<text x="239.44444444444446" y="266" fill="#fff" font-size="11">23.9%</text>
+<text x="100" y="299" fill="#ddd" font-size="11" text-anchor="end">200_en_noHRR</text>
+<rect x="110" y="281" width="263.8888888888889" height="28" fill="#4dabf7" opacity="0.85"/>
+<text x="383.8888888888889" y="299" fill="#fff" font-size="11">52.8%</text>
+<text x="100" y="332" fill="#ddd" font-size="11" text-anchor="end">500_zh_HRR</text>
+<rect x="110" y="314" width="2.2222222222222223" height="28" fill="#ff6b6b" opacity="0.85"/>
+<text x="122.22222222222223" y="332" fill="#fff" font-size="11">0.4%</text>
+<text x="100" y="365" fill="#ddd" font-size="11" text-anchor="end">500_zh_noHRR</text>
+<rect x="110" y="347" width="72.22222222222223" height="28" fill="#4dabf7" opacity="0.85"/>
+<text x="192.22222222222223" y="365" fill="#fff" font-size="11">14.4%</text>
+<text x="100" y="398" fill="#ddd" font-size="11" text-anchor="end">500_en_HRR</text>
+<rect x="110" y="380" width="53.333333333333336" height="28" fill="#ff6b6b" opacity="0.85"/>
+<text x="173.33333333333334" y="398" fill="#fff" font-size="11">10.7%</text>
+<text x="100" y="431" fill="#ddd" font-size="11" text-anchor="end">500_en_noHRR</text>
+<rect x="110" y="413" width="105.55555555555556" height="28" fill="#4dabf7" opacity="0.85"/>
+<text x="225.55555555555554" y="431" fill="#fff" font-size="11">21.1%</text>
+</svg>
+
+<h3>🔍 每个查询召回的具体 fact_id (top-10)</h3>
+<details><summary>展开看每个查询的 top-10 召回 fact_id (12 condition × 6 query)</summary>
+<table class='detail'>
+<thead><tr><th>Condition</th>
+<th>Q1: 飞书+cron AND</th>
+<th>Q2: bedrock+cron AND</th>
+<th>Q3: 飞书 probe</th>
+<th>Q4: contradict</th>
+<th>Q5: NewsBot 精确</th>
+<th>Q6: cron 模糊</th>
+</tr></thead><tbody>
+<tr><td class='cond'>100_zh_HRR</td><td class='ids'>[90, 86, 82, 85, 99, 84, 81, 44, 97, 94]</td><td class='ids'>[90, 19, 14, 84, 11, 10, 88, 99, 79, 2]</td><td class='ids'>[80, 85, 97, 92, 81, 83, 40, 93, 18, 87]</td><td class='ids'>[[3, 24], [3, 13], [3, 19], [16, 18], [18, 24], [20, 24], [1, 16], [3, 12], [3, 14], [15, 24]]</td><td class='ids'>[]</td><td class='ids'>[]</td></tr>
+<tr><td class='cond'>100_zh_noHRR</td><td class='ids'>[]</td><td class='ids'>[]</td><td class='ids'>[1, 3, 4, 5, 15, 17, 22, 6, 8, 9]</td><td class='ids'>[]</td><td class='ids'>[]</td><td class='ids'>[]</td></tr>
+<tr><td class='cond'>100_en_HRR</td><td class='ids'>[97, 98, 52, 49, 89, 25, 34, 94, 76, 50]</td><td class='ids'>[50, 41, 30, 76, 42, 35, 19, 46, 52, 33]</td><td class='ids'>[44, 28, 60, 72, 95, 38, 47, 57, 50, 32]</td><td class='ids'>[[60, 72], [17, 22], [58, 70], [58, 60], [60, 70], [58, 72], [3, 15], [3, 22], [1, 3], [3, 17]]</td><td class='ids'>[95, 98, 97, 94, 96]</td><td class='ids'>[]</td></tr>
+<tr><td class='cond'>100_en_noHRR</td><td class='ids'>[]</td><td class='ids'>[]</td><td class='ids'>[6, 8, 9, 13, 16, 23, 25, 1, 3, 4]</td><td class='ids'>[]</td><td class='ids'>[]</td><td class='ids'>[]</td></tr>
+<tr><td class='cond'>200_zh_HRR</td><td class='ids'>[53, 175, 163, 52, 159, 155, 199, 72, 156, 63]</td><td class='ids'>[152, 37, 151, 19, 14, 34, 175, 159, 156, 11]</td><td class='ids'>[194, 197, 195, 186, 177, 196, 171, 124, 167, 192]</td><td class='ids'>[[3, 24], [3, 13], [3, 27], [3, 19], [18, 36], [24, 39], [24, 40], [16, 18], [36, 42], [42, 43]]</td><td class='ids'>[]</td><td class='ids'>[]</td></tr>
+<tr><td class='cond'>200_zh_noHRR</td><td class='ids'>[]</td><td class='ids'>[]</td><td class='ids'>[43, 1, 3, 4, 5, 15, 17, 22, 26, 39]</td><td class='ids'>[]</td><td class='ids'>[]</td><td class='ids'>[]</td></tr>
+<tr><td class='cond'>200_en_HRR</td><td class='ids'>[193, 81, 86, 50, 191, 189, 34, 194, 158, 66]</td><td class='ids'>[80, 58, 70, 83, 56, 74, 72, 60, 65, 86]</td><td class='ids'>[79, 145, 113, 101, 90, 195, 52, 193, 100, 88]</td><td class='ids'>[[15, 43], [22, 43], [43, 46], [43, 47], [39, 43], [43, 50], [3, 43], [5, 43], [4, 43], [124, 146]]</td><td class='ids'>[191, 195, 192, 193, 194, 198, 190, 196, 197, 189]</td><td class='ids'>[]</td></tr>
+<tr><td class='cond'>200_en_noHRR</td><td class='ids'>[189, 190, 191, 192, 193, 194, 195, 196, 197, 198]</td><td class='ids'>[189, 190, 191, 192, 193, 194, 195, 196, 197, 198]</td><td class='ids'>[6, 8, 9, 13, 16, 23, 25, 28, 31, 32]</td><td class='ids'>[]</td><td class='ids'>[189, 190, 191, 192, 193, 194, 195, 196, 197, 198]</td><td class='ids'>[]</td></tr>
+<tr><td class='cond'>500_zh_HRR</td><td class='ids'>[380, 418, 199, 231, 438, 163, 152, 452, 448, 384]</td><td class='ids'>[452, 444, 402, 37, 400, 76, 420, 470, 19, 463]</td><td class='ids'>[493, 399, 458, 412, 477, 455, 486, 474, 431, 427]</td><td class='ids'>[[146, 159], [139, 159], [3, 24], [55, 75], [3, 98], [159, 233], [3, 13], [16, 115], [51, 78], [159, 205]]</td><td class='ids'>[]</td><td class='ids'>[]</td></tr>
+<tr><td class='cond'>500_zh_noHRR</td><td class='ids'>[474, 475, 476, 477, 478, 479, 480, 481, 482, 483]</td><td class='ids'>[474, 475, 476, 477, 478, 479, 480, 481, 482, 483]</td><td class='ids'>[43, 1, 3, 4, 5, 15, 17, 22, 26, 39]</td><td class='ids'>[]</td><td class='ids'>[]</td><td class='ids'>[]</td></tr>
+<tr><td class='cond'>500_en_HRR</td><td class='ids'>[481, 488, 89, 493, 482, 103, 191, 495, 478, 50]</td><td class='ids'>[215, 242, 212, 225, 190, 134, 198, 191, 161, 336]</td><td class='ids'>[302, 231, 141, 159, 228, 147, 160, 175, 210, 370]</td><td class='ids'>[[15, 43], [22, 43], [43, 107], [43, 46], [43, 47], [43, 82], [43, 81], [39, 43], [43, 50], [43, 65]]</td><td class='ids'>[490, 487, 480, 488, 475, 498, 476, 486, 497, 493]</td><td class='ids'>[]</td></tr>
+<tr><td class='cond'>500_en_noHRR</td><td class='ids'>[474, 475, 476, 477, 478, 479, 480, 481, 482, 483]</td><td class='ids'>[474, 475, 476, 477, 478, 479, 480, 481, 482, 483]</td><td class='ids'>[6, 8, 9, 13, 16, 23, 25, 28, 31, 32]</td><td class='ids'>[]</td><td class='ids'>[474, 475, 476, 477, 478, 479, 480, 481, 482, 483]</td><td class='ids'>[]</td></tr>
+</tbody></table></details>
+
+<h2>🎯 第一轮：20 条手工 fact 的四象限对比</h2>
+<p>这是规模化实验之前的小数据集结果。fact 数量太少（20 条）所以结论不稳，规模化才是主结论。</p>
+<table class='matrix'>
+<thead><tr><th>Query</th><th>中_HRR retrieved</th><th>中_HRR time(ms)</th><th>中_noHRR retrieved</th><th>中_noHRR time(ms)</th><th>英_HRR retrieved</th><th>英_HRR time(ms)</th><th>英_noHRR retrieved</th><th>英_noHRR time(ms)</th></tr></thead><tbody>
+<tr><td>Q1</td><td class='ids'>[16, 8, 17, 9, 6]</td><td>2.135</td><td class='ids'>[5]</td><td>0.257</td><td class='ids'>[18, 5, 12, 3, 14]</td><td>2.019</td><td class='ids'>[5]</td><td>0.244</td></tr>
+<tr><td>Q2</td><td class='ids'>[17, 15, 7, 3, 19]</td><td>1.931</td><td class='ids'>[5]</td><td>0.161</td><td class='ids'>[9, 14, 19, 16, 8]</td><td>1.824</td><td class='ids'>[5]</td><td>0.129</td></tr>
+<tr><td>Q3</td><td class='ids'>[6, 4, 16, 3, 5]</td><td>25.622</td><td class='ids'>[3, 2, 4, 1, 5]</td><td>0.132</td><td class='ids'>[11, 12, 16, 17, 18]</td><td>32.437</td><td class='ids'>[1, 3, 4, 2, 5]</td><td>0.115</td></tr>
+<tr><td>Q4</td><td class='ids'>[[6, 8], [6, 9], [2, 3], [2, 4], [7, 15]]</td><td>0.729</td><td class='ids'>[]</td><td>0.003</td><td class='ids'>[[7, 15], [6, 8]]</td><td>0.322</td><td class='ids'>[]</td><td>0.002</td></tr>
+<tr><td>Q5</td><td class='ids'>[5]</td><td>0.676</td><td class='ids'>[5]</td><td>0.156</td><td class='ids'>[5]</td><td>0.642</td><td class='ids'>[5]</td><td>0.126</td></tr>
+<tr><td>Q6</td><td class='ids'>[]</td><td>0.108</td><td class='ids'>[]</td><td>0.065</td><td class='ids'>[]</td><td>0.117</td><td class='ids'>[]</td><td>0.059</td></tr>
+</tbody></table>
+
+<h2>⚠️ Contradict 单独验证：14 个独立 case</h2>
+
+<div class="warn">
+14 个 case 全部独立灌库（每个 case 只有 2 条 fact，单独跑 contradict）。这样能干净判断 contradict 算法在不同输入下的真实表现。
+</div>
+
+<h4>中文 7 case</h4>
+<table class='matrix'>
+<thead><tr><th>case_id</th><th>类型</th><th>期望</th><th>抽出 entities A</th><th>抽出 entities B</th><th>score</th><th>overlap</th><th>content_sim</th><th>过 0.3 阈值?</th></tr></thead><tbody>
+<tr><td>C1_english_long_number</td><td>纯英文 + 长内容 + 数字矛盾</td><td>contradict</td><td class='ids'>[]</td><td class='ids'>[]</td><td>—</td><td>—</td><td>—</td><td class='bad'>❌</td></tr>
+<tr><td>C2_english_long_state</td><td>纯英文 + 长内容 + 状态词矛盾</td><td>contradict</td><td class='ids'>['The Linear']</td><td class='ids'>['The Linear']</td><td>0.197</td><td>1.00</td><td>0.60</td><td class='bad'>❌</td></tr>
+<tr><td>C3_chinese_long_clear</td><td>中文长内容 + 清晰矛盾词</td><td>contradict</td><td class='ids'>['Bedrock Opus']</td><td class='ids'>['Bedrock Opus']</td><td>0.218</td><td>1.00</td><td>0.56</td><td class='bad'>❌</td></tr>
+<tr><td>C4_chinese_short_number</td><td>中文短内容 + 数字矛盾 (与第一轮失败 case 类似)</td><td>contradict</td><td class='ids'>[]</td><td class='ids'>[]</td><td>—</td><td>—</td><td>—</td><td class='bad'>❌</td></tr>
+<tr><td>C5_english_short_number</td><td>纯英文短内容 + 数字矛盾 (跟 C4 比看语言因素)</td><td>contradict</td><td class='ids'>[]</td><td class='ids'>[]</td><td>—</td><td>—</td><td>—</td><td class='bad'>❌</td></tr>
+<tr><td>C6_negative_control</td><td>负样本: 同主题但不矛盾,验证算法不会乱报</td><td>no_contradict</td><td class='ids'>['Bedrock Opus']</td><td class='ids'>['Bedrock Opus']</td><td>0.239</td><td>1.00</td><td>0.52</td><td class='good'>❌</td></tr>
+<tr><td>C7_english_long_explicit</td><td>最极端 favorable case: 英文 + 长 + 显</td><td>contradict</td><td class='ids'>[]</td><td class='ids'>[]</td><td>—</td><td>—</td><td>—</td><td class='bad'>❌</td></tr>
+</tbody></table>
+<h4>英文 7 case</h4>
+<table class='matrix'>
+<thead><tr><th>case_id</th><th>类型</th><th>期望</th><th>抽出 entities A</th><th>抽出 entities B</th><th>score</th><th>overlap</th><th>content_sim</th><th>过 0.3 阈值?</th></tr></thead><tbody>
+<tr><td>EN_C1_long_number</td><td></td><td>contradict</td><td class='ids'>[]</td><td class='ids'>[]</td><td>—</td><td>—</td><td>—</td><td class='bad'>❌</td></tr>
+<tr><td>EN_C2_long_state</td><td></td><td>contradict</td><td class='ids'>['The Linear']</td><td class='ids'>['The Linear']</td><td>0.197</td><td>1.00</td><td>0.60</td><td class='bad'>❌</td></tr>
+<tr><td>EN_C3_chinese_to_english</td><td></td><td>contradict</td><td class='ids'>['Bedrock Opus']</td><td class='ids'>['Bedrock Opus']</td><td>0.220</td><td>1.00</td><td>0.56</td><td class='bad'>❌</td></tr>
+<tr><td>EN_C4_short_number</td><td></td><td>contradict</td><td class='ids'>[]</td><td class='ids'>[]</td><td>—</td><td>—</td><td>—</td><td class='bad'>❌</td></tr>
+<tr><td>EN_C5_negative</td><td></td><td>no_contradict</td><td class='ids'>['Bedrock Opus']</td><td class='ids'>['Bedrock Opus']</td><td>0.239</td><td>1.00</td><td>0.52</td><td class='good'>❌</td></tr>
+<tr><td>EN_C6_explicit</td><td></td><td>contradict</td><td class='ids'>[]</td><td class='ids'>[]</td><td>—</td><td>—</td><td>—</td><td class='bad'>❌</td></tr>
+<tr><td>EN_C7_capitalized_clear</td><td></td><td>contradict</td><td class='ids'>['The Big Blue Button']</td><td class='ids'>['The Big Blue Button', 'Google Cloud']</td><td>0.121</td><td>0.50</td><td>0.52</td><td class='bad'>❌</td></tr>
+</tbody></table>
+
+<h2>📁 原始 JSON 文件下载</h2>
+<p>如果你想自己分析，所有 JSON 数据保存在 <code>~/garden-experiments/memory-benchmark/results/</code></p>
+<ul>
+<li><code>scaled_benchmark.json</code> — 12 condition × 6 query 的 raw retrieved + 时间</li>
+<li><code>scaled_corrected.json</code> — 修正后 P/R 平均值</li>
+<li><code>four_quadrant_results.json</code> — 第一轮 20 条 fact 的四象限</li>
+<li><code>holographic_results.json</code> — 最早期 holographic 单跑</li>
+<li><code>contradict_validation.json</code> — 中文 7 case contradict</li>
+<li><code>contradict_validation_en.json</code> — 英文 7 case contradict</li>
+</ul>
+
+<h2>📐 SNR 公式与实测对应表</h2>
+<p>HRR 容量公式 <code>SNR = sqrt(dim / N)</code>，dim=1024 时：</p>
+<table class="matrix">
+<thead><tr><th>n_items</th><th>SNR</th><th>状态</th><th>实测对应</th></tr></thead><tbody>
+<tr><td>100</td><td>3.20</td><td class="good">✅ 安全区</td><td>英文 +22% 真实优势</td></tr>
+<tr><td>200</td><td>2.26</td><td class="ok">⚠️ 临界</td><td>开始反转，英文 -29%</td></tr>
+<tr><td>256</td><td>2.00</td><td class="bad">❌ 退化阈值</td><td>—</td></tr>
+<tr><td>500</td><td>1.43</td><td class="bad">❌ 严重退化</td><td>所有场景 HRR 落后</td></tr>
+</tbody></table>
+
+<h2>🔁 复现路径</h2>
+<pre style="background:#2a2a3a;padding:15px;border-radius:6px;color:#a8d4f5;font-size:12px;overflow-x:auto;">
+# 准备
+source ~/.hermes/hermes-agent/venv/bin/activate
+cd ~/garden-experiments/memory-benchmark/
+
+# 装 numpy（默认没装）
+python -m pip install numpy
+
+# 三档规模化实验
+python generate_scaled.py        # 生成数据集
+python bench_scaled.py           # 跑 12 condition (~30秒)
+python analyze_scaled.py         # 修正 P/R
+
+# Contradict 14 case
+python test_contradict.py
+python test_contradict_en.py
+
+# 重新生成本页
+python make_dashboard.py
+</pre>
+
+<p style="color:#666;font-size:11px;text-align:center;margin-top:60px">
+2026-05-17 · fact_store HRR benchmark · 所有数据可独立复现
+</p>
+
+</body></html>

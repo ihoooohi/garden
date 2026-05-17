@@ -1,0 +1,89 @@
+[
+  {
+    "case_id": "EN_C1_long_number",
+    "expected": "contradict",
+    "entities_a": [],
+    "entities_b": [],
+    "score": null,
+    "overlap": null,
+    "content_sim": null,
+    "passed_default_0.3": false
+  },
+  {
+    "case_id": "EN_C2_long_state",
+    "expected": "contradict",
+    "entities_a": [
+      "The Linear"
+    ],
+    "entities_b": [
+      "The Linear"
+    ],
+    "score": 0.197,
+    "overlap": 1.0,
+    "content_sim": 0.605,
+    "passed_default_0.3": false
+  },
+  {
+    "case_id": "EN_C3_chinese_to_english",
+    "expected": "contradict",
+    "entities_a": [
+      "Bedrock Opus"
+    ],
+    "entities_b": [
+      "Bedrock Opus"
+    ],
+    "score": 0.22,
+    "overlap": 1.0,
+    "content_sim": 0.56,
+    "passed_default_0.3": false
+  },
+  {
+    "case_id": "EN_C4_short_number",
+    "expected": "contradict",
+    "entities_a": [],
+    "entities_b": [],
+    "score": null,
+    "overlap": null,
+    "content_sim": null,
+    "passed_default_0.3": false
+  },
+  {
+    "case_id": "EN_C5_negative",
+    "expected": "no_contradict",
+    "entities_a": [
+      "Bedrock Opus"
+    ],
+    "entities_b": [
+      "Bedrock Opus"
+    ],
+    "score": 0.239,
+    "overlap": 1.0,
+    "content_sim": 0.521,
+    "passed_default_0.3": false
+  },
+  {
+    "case_id": "EN_C6_explicit",
+    "expected": "contradict",
+    "entities_a": [],
+    "entities_b": [],
+    "score": null,
+    "overlap": null,
+    "content_sim": null,
+    "passed_default_0.3": false
+  },
+  {
+    "case_id": "EN_C7_capitalized_clear",
+    "expected": "contradict",
+    "entities_a": [
+      "The Big Blue Button"
+    ],
+    "entities_b": [
+      "The Big Blue Button",
+      "Google Cloud"
+    ],
+    "score": 0.121,
+    "overlap": 0.5,
+    "content_sim": 0.515,
+    "passed_default_0.3": false
+  }
+]

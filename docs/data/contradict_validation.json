@@ -1,0 +1,140 @@
+[
+  {
+    "case_id": "C1_english_long_number",
+    "description": "纯英文 + 长内容 + 数字矛盾",
+    "expected": "contradict",
+    "extracted_entities_a": [],
+    "extracted_entities_b": [],
+    "score": null,
+    "overlap": null,
+    "content_sim": null,
+    "found_at_thresholds": {
+      "0.05": false,
+      "0.1": false,
+      "0.2": false,
+      "0.3": false,
+      "0.5": false
+    },
+    "passed_default_threshold_0.3": false
+  },
+  {
+    "case_id": "C2_english_long_state",
+    "description": "纯英文 + 长内容 + 状态词矛盾",
+    "expected": "contradict",
+    "extracted_entities_a": [
+      "The Linear"
+    ],
+    "extracted_entities_b": [
+      "The Linear"
+    ],
+    "score": 0.197,
+    "overlap": 1.0,
+    "content_sim": 0.605,
+    "found_at_thresholds": {
+      "0.05": true,
+      "0.1": true,
+      "0.2": false,
+      "0.3": false,
+      "0.5": false
+    },
+    "passed_default_threshold_0.3": false
+  },
+  {
+    "case_id": "C3_chinese_long_clear",
+    "description": "中文长内容 + 清晰矛盾词",
+    "expected": "contradict",
+    "extracted_entities_a": [
+      "Bedrock Opus"
+    ],
+    "extracted_entities_b": [
+      "Bedrock Opus"
+    ],
+    "score": 0.218,
+    "overlap": 1.0,
+    "content_sim": 0.564,
+    "found_at_thresholds": {
+      "0.05": true,
+      "0.1": true,
+      "0.2": true,
+      "0.3": false,
+      "0.5": false
+    },
+    "passed_default_threshold_0.3": false
+  },
+  {
+    "case_id": "C4_chinese_short_number",
+    "description": "中文短内容 + 数字矛盾 (与第一轮失败 case 类似)",
+    "expected": "contradict",
+    "extracted_entities_a": [],
+    "extracted_entities_b": [],
+    "score": null,
+    "overlap": null,
+    "content_sim": null,
+    "found_at_thresholds": {
+      "0.05": false,
+      "0.1": false,
+      "0.2": false,
+      "0.3": false,
+      "0.5": false
+    },
+    "passed_default_threshold_0.3": false
+  },
+  {
+    "case_id": "C5_english_short_number",
+    "description": "纯英文短内容 + 数字矛盾 (跟 C4 比看语言因素)",
+    "expected": "contradict",
+    "extracted_entities_a": [],
+    "extracted_entities_b": [],
+    "score": null,
+    "overlap": null,
+    "content_sim": null,
+    "found_at_thresholds": {
+      "0.05": false,
+      "0.1": false,
+      "0.2": false,
+      "0.3": false,
+      "0.5": false
+    },
+    "passed_default_threshold_0.3": false
+  },
+  {
+    "case_id": "C6_negative_control",
+    "description": "负样本: 同主题但不矛盾,验证算法不会乱报",
+    "expected": "no_contradict",
+    "extracted_entities_a": [
+      "Bedrock Opus"
+    ],
+    "extracted_entities_b": [
+      "Bedrock Opus"
+    ],
+    "score": 0.239,
+    "overlap": 1.0,
+    "content_sim": 0.521,
+    "found_at_thresholds": {
+      "0.05": true,
+      "0.1": true,
+      "0.2": true,
+      "0.3": false,
+      "0.5": false
+    },
+    "passed_default_threshold_0.3": false
+  },
+  {
+    "case_id": "C7_english_long_explicit",
+    "description": "最极端 favorable case: 英文 + 长 + 显式 'is/is not'",
+    "expected": "contradict",
+    "extracted_entities_a": [],
+    "extracted_entities_b": [],
+    "score": null,
+    "overlap": null,
+    "content_sim": null,
+    "found_at_thresholds": {
+      "0.05": false,
+      "0.1": false,
+      "0.2": false,
+      "0.3": false,
+      "0.5": false
+    },
+    "passed_default_threshold_0.3": false
+  }
+]

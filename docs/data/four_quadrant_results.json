@@ -1,0 +1,276 @@
+{
+  "summary": {
+    "Q1": {
+      "type": "two_entity_AND_direct",
+      "中文_HRR": 0.0,
+      "中文_noHRR": 1.0,
+      "英文_HRR": 1.0,
+      "英文_noHRR": 1.0
+    },
+    "Q2": {
+      "type": "two_entity_AND_indirect",
+      "中文_HRR": 0.0,
+      "中文_noHRR": 0.5,
+      "英文_HRR": 0.5,
+      "英文_noHRR": 0.5
+    },
+    "Q3": {
+      "type": "single_entity_recall",
+      "中文_HRR": 0.6,
+      "中文_noHRR": 1.0,
+      "英文_HRR": 0.0,
+      "英文_noHRR": 1.0
+    },
+    "Q4": {
+      "type": "contradiction_detection",
+      "中文_HRR": 1.0,
+      "中文_noHRR": 0.0,
+      "英文_HRR": 1.0,
+      "英文_noHRR": 0.0
+    },
+    "Q5": {
+      "type": "exact_fact_retrieval",
+      "中文_HRR": 1.0,
+      "中文_noHRR": 1.0,
+      "英文_HRR": 1.0,
+      "英文_noHRR": 1.0
+    },
+    "Q6": {
+      "type": "fuzzy_semantic_recall",
+      "中文_HRR": 0.0,
+      "中文_noHRR": 0.0,
+      "英文_HRR": 0.0,
+      "英文_noHRR": 0.0
+    }
+  },
+  "raw_results": {
+    "中文_HRR": {
+      "Q1": {
+        "type": "two_entity_AND_direct",
+        "retrieved": [
+          16,
+          8,
+          17,
+          9,
+          6
+        ],
+        "elapsed_ms": 2.135
+      },
+      "Q2": {
+        "type": "two_entity_AND_indirect",
+        "retrieved": [
+          17,
+          15,
+          7,
+          3,
+          19
+        ],
+        "elapsed_ms": 1.931
+      },
+      "Q3": {
+        "type": "single_entity_recall",
+        "retrieved": [
+          6,
+          4,
+          16,
+          3,
+          5
+        ],
+        "elapsed_ms": 25.622
+      },
+      "Q4": {
+        "type": "contradiction_detection",
+        "retrieved": [
+          [
+            6,
+            8
+          ],
+          [
+            6,
+            9
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            7,
+            15
+          ]
+        ],
+        "elapsed_ms": 0.729
+      },
+      "Q5": {
+        "type": "exact_fact_retrieval",
+        "retrieved": [
+          5
+        ],
+        "elapsed_ms": 0.676
+      },
+      "Q6": {
+        "type": "fuzzy_semantic_recall",
+        "retrieved": [],
+        "elapsed_ms": 0.108
+      }
+    },
+    "中文_noHRR": {
+      "Q1": {
+        "type": "two_entity_AND_direct",
+        "retrieved": [
+          5
+        ],
+        "elapsed_ms": 0.257
+      },
+      "Q2": {
+        "type": "two_entity_AND_indirect",
+        "retrieved": [
+          5
+        ],
+        "elapsed_ms": 0.161
+      },
+      "Q3": {
+        "type": "single_entity_recall",
+        "retrieved": [
+          3,
+          2,
+          4,
+          1,
+          5
+        ],
+        "elapsed_ms": 0.132
+      },
+      "Q4": {
+        "type": "contradiction_detection",
+        "retrieved": [],
+        "elapsed_ms": 0.003
+      },
+      "Q5": {
+        "type": "exact_fact_retrieval",
+        "retrieved": [
+          5
+        ],
+        "elapsed_ms": 0.156
+      },
+      "Q6": {
+        "type": "fuzzy_semantic_recall",
+        "retrieved": [],
+        "elapsed_ms": 0.065
+      }
+    },
+    "英文_HRR": {
+      "Q1": {
+        "type": "two_entity_AND_direct",
+        "retrieved": [
+          18,
+          5,
+          12,
+          3,
+          14
+        ],
+        "elapsed_ms": 2.019
+      },
+      "Q2": {
+        "type": "two_entity_AND_indirect",
+        "retrieved": [
+          9,
+          14,
+          19,
+          16,
+          8
+        ],
+        "elapsed_ms": 1.824
+      },
+      "Q3": {
+        "type": "single_entity_recall",
+        "retrieved": [
+          11,
+          12,
+          16,
+          17,
+          18
+        ],
+        "elapsed_ms": 32.437
+      },
+      "Q4": {
+        "type": "contradiction_detection",
+        "retrieved": [
+          [
+            7,
+            15
+          ],
+          [
+            6,
+            8
+          ]
+        ],
+        "elapsed_ms": 0.322
+      },
+      "Q5": {
+        "type": "exact_fact_retrieval",
+        "retrieved": [
+          5
+        ],
+        "elapsed_ms": 0.642
+      },
+      "Q6": {
+        "type": "fuzzy_semantic_recall",
+        "retrieved": [],
+        "elapsed_ms": 0.117
+      }
+    },
+    "英文_noHRR": {
+      "Q1": {
+        "type": "two_entity_AND_direct",
+        "retrieved": [
+          5
+        ],
+        "elapsed_ms": 0.244
+      },
+      "Q2": {
+        "type": "two_entity_AND_indirect",
+        "retrieved": [
+          5
+        ],
+        "elapsed_ms": 0.129
+      },
+      "Q3": {
+        "type": "single_entity_recall",
+        "retrieved": [
+          1,
+          3,
+          4,
+          2,
+          5
+        ],
+        "elapsed_ms": 0.115
+      },
+      "Q4": {
+        "type": "contradiction_detection",
+        "retrieved": [],
+        "elapsed_ms": 0.002
+      },
+      "Q5": {
+        "type": "exact_fact_retrieval",
+        "retrieved": [
+          5
+        ],
+        "elapsed_ms": 0.126
+      },
+      "Q6": {
+        "type": "fuzzy_semantic_recall",
+        "retrieved": [],
+        "elapsed_ms": 0.059
+      }
+    }
+  },
+  "averages": {
+    "中文_HRR": 0.43333333333333335,
+    "中文_noHRR": 0.5833333333333334,
+    "英文_HRR": 0.5833333333333334,
+    "英文_noHRR": 0.5833333333333334
+  }
+}

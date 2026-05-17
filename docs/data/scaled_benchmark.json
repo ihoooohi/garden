@@ -1,0 +1,1084 @@
+{
+  "100_zh_HRR": {
+    "Q1": {
+      "retrieved": [
+        90,
+        86,
+        82,
+        85,
+        99,
+        84,
+        81,
+        44,
+        97,
+        94
+      ],
+      "elapsed_ms": 8.64,
+      "recall": 0.4,
+      "precision_at_10": 0.2
+    },
+    "Q2": {
+      "retrieved": [
+        90,
+        19,
+        14,
+        84,
+        11,
+        10,
+        88,
+        99,
+        79,
+        2
+      ],
+      "elapsed_ms": 8.24,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    },
+    "Q3": {
+      "retrieved": [
+        80,
+        85,
+        97,
+        92,
+        81,
+        83,
+        40,
+        93,
+        18,
+        87
+      ],
+      "elapsed_ms": 108.95,
+      "recall": 0.4,
+      "precision_at_10": 0.2
+    },
+    "Q4": {
+      "retrieved": [
+        [
+          3,
+          24
+        ],
+        [
+          3,
+          13
+        ],
+        [
+          3,
+          19
+        ],
+        [
+          16,
+          18
+        ],
+        [
+          18,
+          24
+        ],
+        [
+          20,
+          24
+        ],
+        [
+          1,
+          16
+        ],
+        [
+          3,
+          12
+        ],
+        [
+          3,
+          14
+        ],
+        [
+          15,
+          24
+        ]
+      ],
+      "elapsed_ms": 19.3,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    },
+    "Q5": {
+      "retrieved": [],
+      "elapsed_ms": 0.15,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    },
+    "Q6": {
+      "retrieved": [],
+      "elapsed_ms": 0.11,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    }
+  },
+  "100_zh_noHRR": {
+    "Q1": {
+      "retrieved": [],
+      "elapsed_ms": 0.14,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    },
+    "Q2": {
+      "retrieved": [],
+      "elapsed_ms": 0.04,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    },
+    "Q3": {
+      "retrieved": [
+        1,
+        3,
+        4,
+        5,
+        15,
+        17,
+        22,
+        6,
+        8,
+        9
+      ],
+      "elapsed_ms": 0.33,
+      "recall": 0.8333333333333334,
+      "precision_at_10": 1.0
+    },
+    "Q4": {
+      "retrieved": [],
+      "elapsed_ms": 0.0,
+      "recall": 0.0,
+      "precision_at_10": 1.0
+    },
+    "Q5": {
+      "retrieved": [],
+      "elapsed_ms": 0.04,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    },
+    "Q6": {
+      "retrieved": [],
+      "elapsed_ms": 0.04,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    }
+  },
+  "100_en_HRR": {
+    "Q1": {
+      "retrieved": [
+        97,
+        98,
+        52,
+        49,
+        89,
+        25,
+        34,
+        94,
+        76,
+        50
+      ],
+      "elapsed_ms": 8.35,
+      "recall": 0.6,
+      "precision_at_10": 0.3
+    },
+    "Q2": {
+      "retrieved": [
+        50,
+        41,
+        30,
+        76,
+        42,
+        35,
+        19,
+        46,
+        52,
+        33
+      ],
+      "elapsed_ms": 8.0,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    },
+    "Q3": {
+      "retrieved": [
+        44,
+        28,
+        60,
+        72,
+        95,
+        38,
+        47,
+        57,
+        50,
+        32
+      ],
+      "elapsed_ms": 120.21,
+      "recall": 0.6,
+      "precision_at_10": 0.1
+    },
+    "Q4": {
+      "retrieved": [
+        [
+          60,
+          72
+        ],
+        [
+          17,
+          22
+        ],
+        [
+          58,
+          70
+        ],
+        [
+          58,
+          60
+        ],
+        [
+          60,
+          70
+        ],
+        [
+          58,
+          72
+        ],
+        [
+          3,
+          15
+        ],
+        [
+          3,
+          22
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          3,
+          17
+        ]
+      ],
+      "elapsed_ms": 4.43,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    },
+    "Q5": {
+      "retrieved": [
+        95,
+        98,
+        97,
+        94,
+        96
+      ],
+      "elapsed_ms": 2.69,
+      "recall": 1.0,
+      "precision_at_10": 0.2
+    },
+    "Q6": {
+      "retrieved": [],
+      "elapsed_ms": 0.12,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    }
+  },
+  "100_en_noHRR": {
+    "Q1": {
+      "retrieved": [],
+      "elapsed_ms": 0.22,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    },
+    "Q2": {
+      "retrieved": [],
+      "elapsed_ms": 0.13,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    },
+    "Q3": {
+      "retrieved": [
+        6,
+        8,
+        9,
+        13,
+        16,
+        23,
+        25,
+        1,
+        3,
+        4
+      ],
+      "elapsed_ms": 0.28,
+      "recall": 0.8333333333333334,
+      "precision_at_10": 1.0
+    },
+    "Q4": {
+      "retrieved": [],
+      "elapsed_ms": 0.0,
+      "recall": 0.0,
+      "precision_at_10": 1.0
+    },
+    "Q5": {
+      "retrieved": [],
+      "elapsed_ms": 0.08,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    },
+    "Q6": {
+      "retrieved": [],
+      "elapsed_ms": 0.05,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    }
+  },
+  "200_zh_HRR": {
+    "Q1": {
+      "retrieved": [
+        53,
+        175,
+        163,
+        52,
+        159,
+        155,
+        199,
+        72,
+        156,
+        63
+      ],
+      "elapsed_ms": 16.59,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    },
+    "Q2": {
+      "retrieved": [
+        152,
+        37,
+        151,
+        19,
+        14,
+        34,
+        175,
+        159,
+        156,
+        11
+      ],
+      "elapsed_ms": 15.97,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    },
+    "Q3": {
+      "retrieved": [
+        194,
+        197,
+        195,
+        186,
+        177,
+        196,
+        171,
+        124,
+        167,
+        192
+      ],
+      "elapsed_ms": 223.08,
+      "recall": 0.25,
+      "precision_at_10": 0.5
+    },
+    "Q4": {
+      "retrieved": [
+        [
+          3,
+          24
+        ],
+        [
+          3,
+          13
+        ],
+        [
+          3,
+          27
+        ],
+        [
+          3,
+          19
+        ],
+        [
+          18,
+          36
+        ],
+        [
+          24,
+          39
+        ],
+        [
+          24,
+          40
+        ],
+        [
+          16,
+          18
+        ],
+        [
+          36,
+          42
+        ],
+        [
+          42,
+          43
+        ]
+      ],
+      "elapsed_ms": 83.77,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    },
+    "Q5": {
+      "retrieved": [],
+      "elapsed_ms": 0.18,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    },
+    "Q6": {
+      "retrieved": [],
+      "elapsed_ms": 0.12,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    }
+  },
+  "200_zh_noHRR": {
+    "Q1": {
+      "retrieved": [],
+      "elapsed_ms": 0.26,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    },
+    "Q2": {
+      "retrieved": [],
+      "elapsed_ms": 0.06,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    },
+    "Q3": {
+      "retrieved": [
+        43,
+        1,
+        3,
+        4,
+        5,
+        15,
+        17,
+        22,
+        26,
+        39
+      ],
+      "elapsed_ms": 0.46,
+      "recall": 0.8333333333333334,
+      "precision_at_10": 1.0
+    },
+    "Q4": {
+      "retrieved": [],
+      "elapsed_ms": 0.01,
+      "recall": 0.0,
+      "precision_at_10": 1.0
+    },
+    "Q5": {
+      "retrieved": [],
+      "elapsed_ms": 0.05,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    },
+    "Q6": {
+      "retrieved": [],
+      "elapsed_ms": 0.07,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    }
+  },
+  "200_en_HRR": {
+    "Q1": {
+      "retrieved": [
+        193,
+        81,
+        86,
+        50,
+        191,
+        189,
+        34,
+        194,
+        158,
+        66
+      ],
+      "elapsed_ms": 16.14,
+      "recall": 0.4,
+      "precision_at_10": 0.4
+    },
+    "Q2": {
+      "retrieved": [
+        80,
+        58,
+        70,
+        83,
+        56,
+        74,
+        72,
+        60,
+        65,
+        86
+      ],
+      "elapsed_ms": 16.13,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    },
+    "Q3": {
+      "retrieved": [
+        79,
+        145,
+        113,
+        101,
+        90,
+        195,
+        52,
+        193,
+        100,
+        88
+      ],
+      "elapsed_ms": 246.2,
+      "recall": 0.13333333333333333,
+      "precision_at_10": 0.2
+    },
+    "Q4": {
+      "retrieved": [
+        [
+          15,
+          43
+        ],
+        [
+          22,
+          43
+        ],
+        [
+          43,
+          46
+        ],
+        [
+          43,
+          47
+        ],
+        [
+          39,
+          43
+        ],
+        [
+          43,
+          50
+        ],
+        [
+          3,
+          43
+        ],
+        [
+          5,
+          43
+        ],
+        [
+          4,
+          43
+        ],
+        [
+          124,
+          146
+        ]
+      ],
+      "elapsed_ms": 17.88,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    },
+    "Q5": {
+      "retrieved": [
+        191,
+        195,
+        192,
+        193,
+        194,
+        198,
+        190,
+        196,
+        197,
+        189
+      ],
+      "elapsed_ms": 5.05,
+      "recall": 1.0,
+      "precision_at_10": 0.1
+    },
+    "Q6": {
+      "retrieved": [],
+      "elapsed_ms": 0.12,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    }
+  },
+  "200_en_noHRR": {
+    "Q1": {
+      "retrieved": [
+        189,
+        190,
+        191,
+        192,
+        193,
+        194,
+        195,
+        196,
+        197,
+        198
+      ],
+      "elapsed_ms": 0.44,
+      "recall": 1.0,
+      "precision_at_10": 1.0
+    },
+    "Q2": {
+      "retrieved": [
+        189,
+        190,
+        191,
+        192,
+        193,
+        194,
+        195,
+        196,
+        197,
+        198
+      ],
+      "elapsed_ms": 0.22,
+      "recall": 1.0,
+      "precision_at_10": 1.0
+    },
+    "Q3": {
+      "retrieved": [
+        6,
+        8,
+        9,
+        13,
+        16,
+        23,
+        25,
+        28,
+        31,
+        32
+      ],
+      "elapsed_ms": 0.55,
+      "recall": 0.8333333333333334,
+      "precision_at_10": 1.0
+    },
+    "Q4": {
+      "retrieved": [],
+      "elapsed_ms": 0.01,
+      "recall": 0.0,
+      "precision_at_10": 1.0
+    },
+    "Q5": {
+      "retrieved": [
+        189,
+        190,
+        191,
+        192,
+        193,
+        194,
+        195,
+        196,
+        197,
+        198
+      ],
+      "elapsed_ms": 0.31,
+      "recall": 1.0,
+      "precision_at_10": 0.1
+    },
+    "Q6": {
+      "retrieved": [],
+      "elapsed_ms": 0.08,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    }
+  },
+  "500_zh_HRR": {
+    "Q1": {
+      "retrieved": [
+        380,
+        418,
+        199,
+        231,
+        438,
+        163,
+        152,
+        452,
+        448,
+        384
+      ],
+      "elapsed_ms": 47.66,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    },
+    "Q2": {
+      "retrieved": [
+        452,
+        444,
+        402,
+        37,
+        400,
+        76,
+        420,
+        470,
+        19,
+        463
+      ],
+      "elapsed_ms": 42.18,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    },
+    "Q3": {
+      "retrieved": [
+        493,
+        399,
+        458,
+        412,
+        477,
+        455,
+        486,
+        474,
+        431,
+        427
+      ],
+      "elapsed_ms": 580.51,
+      "recall": 0.14666666666666667,
+      "precision_at_10": 0.4
+    },
+    "Q4": {
+      "retrieved": [
+        [
+          146,
+          159
+        ],
+        [
+          139,
+          159
+        ],
+        [
+          3,
+          24
+        ],
+        [
+          55,
+          75
+        ],
+        [
+          3,
+          98
+        ],
+        [
+          159,
+          233
+        ],
+        [
+          3,
+          13
+        ],
+        [
+          16,
+          115
+        ],
+        [
+          51,
+          78
+        ],
+        [
+          159,
+          205
+        ]
+      ],
+      "elapsed_ms": 512.0,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    },
+    "Q5": {
+      "retrieved": [],
+      "elapsed_ms": 0.31,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    },
+    "Q6": {
+      "retrieved": [],
+      "elapsed_ms": 0.14,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    }
+  },
+  "500_zh_noHRR": {
+    "Q1": {
+      "retrieved": [
+        474,
+        475,
+        476,
+        477,
+        478,
+        479,
+        480,
+        481,
+        482,
+        483
+      ],
+      "elapsed_ms": 0.43,
+      "recall": 0.4,
+      "precision_at_10": 1.0
+    },
+    "Q2": {
+      "retrieved": [
+        474,
+        475,
+        476,
+        477,
+        478,
+        479,
+        480,
+        481,
+        482,
+        483
+      ],
+      "elapsed_ms": 0.33,
+      "recall": 0.4,
+      "precision_at_10": 1.0
+    },
+    "Q3": {
+      "retrieved": [
+        43,
+        1,
+        3,
+        4,
+        5,
+        15,
+        17,
+        22,
+        26,
+        39
+      ],
+      "elapsed_ms": 1.03,
+      "recall": 0.3333333333333333,
+      "precision_at_10": 1.0
+    },
+    "Q4": {
+      "retrieved": [],
+      "elapsed_ms": 0.01,
+      "recall": 0.0,
+      "precision_at_10": 1.0
+    },
+    "Q5": {
+      "retrieved": [],
+      "elapsed_ms": 0.05,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    },
+    "Q6": {
+      "retrieved": [],
+      "elapsed_ms": 0.07,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    }
+  },
+  "500_en_HRR": {
+    "Q1": {
+      "retrieved": [
+        481,
+        488,
+        89,
+        493,
+        482,
+        103,
+        191,
+        495,
+        478,
+        50
+      ],
+      "elapsed_ms": 40.69,
+      "recall": 0.24,
+      "precision_at_10": 0.6
+    },
+    "Q2": {
+      "retrieved": [
+        215,
+        242,
+        212,
+        225,
+        190,
+        134,
+        198,
+        191,
+        161,
+        336
+      ],
+      "elapsed_ms": 39.15,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    },
+    "Q3": {
+      "retrieved": [
+        302,
+        231,
+        141,
+        159,
+        228,
+        147,
+        160,
+        175,
+        210,
+        370
+      ],
+      "elapsed_ms": 630.82,
+      "recall": 0.04,
+      "precision_at_10": 0.0
+    },
+    "Q4": {
+      "retrieved": [
+        [
+          15,
+          43
+        ],
+        [
+          22,
+          43
+        ],
+        [
+          43,
+          107
+        ],
+        [
+          43,
+          46
+        ],
+        [
+          43,
+          47
+        ],
+        [
+          43,
+          82
+        ],
+        [
+          43,
+          81
+        ],
+        [
+          39,
+          43
+        ],
+        [
+          43,
+          50
+        ],
+        [
+          43,
+          65
+        ]
+      ],
+      "elapsed_ms": 104.28,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    },
+    "Q5": {
+      "retrieved": [
+        490,
+        487,
+        480,
+        488,
+        475,
+        498,
+        476,
+        486,
+        497,
+        493
+      ],
+      "elapsed_ms": 11.55,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    },
+    "Q6": {
+      "retrieved": [],
+      "elapsed_ms": 0.15,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    }
+  },
+  "500_en_noHRR": {
+    "Q1": {
+      "retrieved": [
+        474,
+        475,
+        476,
+        477,
+        478,
+        479,
+        480,
+        481,
+        482,
+        483
+      ],
+      "elapsed_ms": 0.51,
+      "recall": 0.4,
+      "precision_at_10": 1.0
+    },
+    "Q2": {
+      "retrieved": [
+        474,
+        475,
+        476,
+        477,
+        478,
+        479,
+        480,
+        481,
+        482,
+        483
+      ],
+      "elapsed_ms": 0.31,
+      "recall": 0.4,
+      "precision_at_10": 1.0
+    },
+    "Q3": {
+      "retrieved": [
+        6,
+        8,
+        9,
+        13,
+        16,
+        23,
+        25,
+        28,
+        31,
+        32
+      ],
+      "elapsed_ms": 1.23,
+      "recall": 0.3333333333333333,
+      "precision_at_10": 1.0
+    },
+    "Q4": {
+      "retrieved": [],
+      "elapsed_ms": 0.01,
+      "recall": 0.0,
+      "precision_at_10": 1.0
+    },
+    "Q5": {
+      "retrieved": [
+        474,
+        475,
+        476,
+        477,
+        478,
+        479,
+        480,
+        481,
+        482,
+        483
+      ],
+      "elapsed_ms": 0.39,
+      "recall": 1.0,
+      "precision_at_10": 0.1
+    },
+    "Q6": {
+      "retrieved": [],
+      "elapsed_ms": 0.08,
+      "recall": 0.0,
+      "precision_at_10": 0.0
+    }
+  }
+}

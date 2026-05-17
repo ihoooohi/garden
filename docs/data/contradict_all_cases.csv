@@ -1,0 +1,15 @@
+case_id,language,expected,score,overlap,content_sim,passed_0.3
+C1_english_long_number,zh,contradict,,,,False
+C2_english_long_state,zh,contradict,0.197,1.0,0.605,False
+C3_chinese_long_clear,zh,contradict,0.218,1.0,0.564,False
+C4_chinese_short_number,zh,contradict,,,,False
+C5_english_short_number,zh,contradict,,,,False
+C6_negative_control,zh,no_contradict,0.239,1.0,0.521,False
+C7_english_long_explicit,zh,contradict,,,,False
+EN_C1_long_number,en,contradict,,,,False
+EN_C2_long_state,en,contradict,0.197,1.0,0.605,False
+EN_C3_chinese_to_english,en,contradict,0.22,1.0,0.56,False
+EN_C4_short_number,en,contradict,,,,False
+EN_C5_negative,en,no_contradict,0.239,1.0,0.521,False
+EN_C6_explicit,en,contradict,,,,False
+EN_C7_capitalized_clear,en,contradict,0.121,0.5,0.515,False
