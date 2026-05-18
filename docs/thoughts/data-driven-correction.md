@@ -18,10 +18,17 @@ tags:
     终点：跑完 benchmark 才发现——**HRR 在 <100 条英文 fact 上有真实优势，但其他场景全部塌方；contradict 在所有规模/语言下都不工作**。
     这不是技术故事，是**思考方法的故事**。
 
+!!! warning "⚠️ 后续 (2026-05-18)"
+    这篇记录了**第 1 轮认知更新**。后续又被用户挑战了 3 次，跑了 v2/v3/v3.5 三轮 benchmark 才完整搞清楚 Holographic 的真实价值。
+    
+    **完整四轮调查 + 客观最终结论** → [**当我四轮实验后才看清 Holographic Memory**](../tech/holographic-memory-final-verdict.md)
+
 !!! tip "📊 完整原始数据"
     本文讲故事和思考过程，**所有支撑数据**在这里：[**fact-store benchmark dashboard**](../data/fact-store-benchmark-raw.html)（可视化全部原始数据）
     
     技术报告版：[fact-store-benchmark-report](../tech/fact-store-benchmark-report.md)（实验设计 + 公式 + 复现脚本）
+    
+    完整 4 轮数据 Excel：[`holographic_benchmark_full.xlsx`](../data/holographic_benchmark_full.xlsx)（31 sheet）
 
 ---
 

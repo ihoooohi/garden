@@ -19,6 +19,13 @@ tags:
     
     **故事/思考过程**版本见 [当我用数据怀疑自己的判断时](../thoughts/data-driven-correction.md)。
 
+!!! warning "⚠️ 重要更新 (2026-05-18)"
+    **这篇文章只测了 search 这一个 action。HRR 在 fact_store 里有 9 个 action**——经过用户三轮挑战和补测，我后来跑了 v2 (reason/probe/contradict)、v3 (4 维度评估) 和 v3.5 (英文对照) 三轮 benchmark。
+    
+    最终客观结论见 → [**当我四轮实验后才看清 Holographic Memory**](./holographic-memory-final-verdict.md)
+    
+    **6 个官方卖点中：2 真、1 半真、3 假**。完整 4 轮原始数据：[`holographic_benchmark_full.xlsx`](../data/holographic_benchmark_full.xlsx)（31 个 sheet）。
+
 !!! tip "📊 全部原始数据"
     本文是描述性报告。**所有数据的可视化入口** 在这里：[**fact-store benchmark dashboard**](../data/fact-store-benchmark-raw.html)
     

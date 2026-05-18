@@ -16,6 +16,16 @@ tags:
     最近我才搞明白：**Hermes 实际上有四种不同的记忆机制，各自解决不同的问题**。这篇拆给你看，每种适合什么场景、为什么不能用一种代替全部。
     没有数学，没有论文，只有"我该用哪个工具"。
 
+!!! warning "⚠️ 关于 fact_store / Holographic 的后续修正 (2026-05-18)"
+    这篇里我说 fact_store 提供"代数推理 + 自动矛盾检测"是基于官方文档宣传，**没实测**。后来跑了 4 轮 benchmark 才发现：
+    
+    - ✅ **真**：本地 SQLite + sub-millisecond 检索 + trust scoring 自我修正
+    - ❌ **假**：HRR 代数 reason/probe（F1 0-50%）、矛盾检测 contradict（4 轮 0/12 检出）
+    
+    详见 → [**当我四轮实验后才看清 Holographic Memory**](./holographic-memory-final-verdict.md)
+    
+    实操建议：用 fact_store 当 trust-aware 的 SQLite fact store 即可，**别调用 reason/probe/contradict**。
+
 ---
 
 ## 起点：一个让 ChatGPT 抓瞎的问题
