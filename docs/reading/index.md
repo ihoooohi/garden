@@ -15,6 +15,8 @@ description: 读过的好文章 + 我的批注、对比、提炼
 | [AI Agent 最大的瓶颈是可靠性](agent-reliability-bottleneck.md) | AI Agent · 可靠性 · METR | 2026-05 |
 | [Juicebox 的 Agent 编排](juicebox-agent-orchestration.md) | AI Agent · 产品工程 | 2026-05 |
 | [Mem0 研究备忘](mem0-research-notes.md) | AI Agent · 长记忆 | 2026-05 |
+| [Red/green TDD —— Simon Willison 给 coding agent 的最短咒语](red-green-tdd-for-agents.md) | Agent · TDD · Prompt | 2026-05 |
+| [Karpathy 的 3.5 小时 LLM 全栈课](karpathy-llm-deep-dive.md) | LLM · 学习路径 · RLHF | 2026-05 |
 
 ---
 
