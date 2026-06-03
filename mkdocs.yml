@@ -131,6 +131,7 @@ nav:
       - interview/ai-agent-interview-tour.md
       - interview/agent-service-reliability.md
       - interview/vector-db-milvus.md
+      - interview/sft-data-quality-system.md
   - 💭 思考与随笔:
       - thoughts/index.md
       - thoughts/algorithm-vs-llm-reasoning.md
