@@ -132,6 +132,7 @@ nav:
       - interview/agent-service-reliability.md
       - interview/vector-db-milvus.md
       - interview/sft-data-quality-system.md
+      - interview/grpo-sft-data-reuse.md
   - 💭 思考与随笔:
       - thoughts/index.md
       - thoughts/algorithm-vs-llm-reasoning.md
