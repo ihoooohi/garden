@@ -110,6 +110,7 @@ nav:
       - reading/index.md
       - reading/mem0-research-notes.md
       - reading/juicebox-agent-orchestration.md
+      - reading/mercor-human-data-infrastructure.md
       - reading/agent-reliability-bottleneck.md
       - reading/agent-evaluation-tracing.md
       - reading/red-green-tdd-for-agents.md
