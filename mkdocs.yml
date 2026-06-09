@@ -118,6 +118,7 @@ nav:
       - reading/agent-memory-pydantic-ontology.md
       - reading/sierra-agents-as-a-service.md
       - reading/post-training-terrain-metaphor.md
+      - reading/vllm-source-deep-dive-intro.md
   - 🛠️ 技术笔记:
       - tech/index.md
       - tech/hermes-architecture.md
