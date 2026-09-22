@@ -20,7 +20,7 @@ tags:
 
 ---
 
-## 🎯 它解决什么问题
+## 它解决什么问题
 
 招聘里"找候选人"这件事，过去十年的工具栈都是被动的：LinkedIn Recruiter / Greenhouse / Lever 给你 search box，你自己写 boolean query，自己翻页，自己发邮件。结果是招一个高级岗位，recruiter 平均要在 LinkedIn 上看 200+ 个 profile，发 50+ 封冷邮件，转化率被磨到很低。
 
@@ -32,7 +32,7 @@ Juicebox 的判断是：**这不是搜索问题，是 worker pool 问题**。每
 
 ---
 
-## 🧩 它本质上是什么？
+## 它本质上是什么？
 
 !!! tip "核心判断"
     **Juicebox Agent ≠ 通用 reasoning agent = 一个带状态机、HITL bootstrap 协议、和 per-agent calibration state 的窄域 vertical worker。**
@@ -48,7 +48,7 @@ Juicebox 的判断是：**这不是搜索问题，是 worker pool 问题**。每
 
 ---
 
-## 🏗️ 核心机制：6 状态机 + 3-Approval 冷启动
+## 核心机制：6 状态机 + 3-Approval 冷启动
 
 整个编排的骨架是状态机。官方文档里明确列了 6 种状态：
 
@@ -88,7 +88,7 @@ flowchart TD
 
 ---
 
-## 🔄 反馈循环：从批量再训练到实时校准
+## 反馈循环：从批量再训练到实时校准
 
 Agent 1.0 时代用户反馈是"等批量再训练"——你 reject 了几个，得等下次更新才生效。Agent 2.0（2025-09）把这条链路压成了**实时**：
 
@@ -102,7 +102,7 @@ Agent 1.0 时代用户反馈是"等批量再训练"——你 reject 了几个，
 
 ---
 
-## 🧱 Multi-Agent：刻意保持简单
+## Multi-Agent：刻意保持简单
 
 Juicebox 的"multi-agent"和当下最热闹的 multi-agent collaboration 完全不是一回事。它的 multi-agent 是**配额维度**，不是协作维度：
 
@@ -117,7 +117,7 @@ Juicebox 的"multi-agent"和当下最热闹的 multi-agent collaboration 完全�
 
 ---
 
-## 🛠️ 与 Autopilot 的关系（容易混）
+## 与 Autopilot 的关系（容易混）
 
 Juicebox 的两个核心功能——Agent 和 Autopilot——名字常一起出现，但工程含义不同：
 
@@ -134,7 +134,7 @@ Juicebox 的两个核心功能——Agent 和 Autopilot——名字常一起出�
 
 ---
 
-## 🔌 Action Surface：Agent 能做什么
+## Action Surface：Agent 能做什么
 
 从博客和文档里能拼出来 agent 的工具调用面：
 
@@ -150,7 +150,7 @@ Juicebox 的两个核心功能——Agent 和 Autopilot——名字常一起出�
 
 ---
 
-## ⚠️ 难点 / 局限
+## 难点 / 局限
 
 Juicebox 这套范式的代价不是没有：
 
@@ -162,16 +162,16 @@ Juicebox 这套范式的代价不是没有：
 
 ---
 
-## 🎯 什么场景适合 / 不适合
+## 什么场景适合 / 不适合
 
-### ✅ 适合
+### 适合
 
 - **重复性、长期性的招聘岗位**——文档里点名："Find Technical Recruiters in the Bay Area"、"Find Account Executives in NYC" 这种 evergreen role
 - **市场扫描 / 竞争情报**——"Find VPs at competitor X"、"Find SWEs who just went through layoff"
 - **ATS rediscovery**——把过去面过但没招的银牌候选人重新激活
 - **BD / 高定向 prospect list**——招聘 agent 框架其实可以跨界用到销售 lead gen
 
-### ❌ 不太适合
+### 不太适合
 
 - **一次性、独特的高管搜索**——3-approval 都对齐不到，agent 还没学会就招完了
 - **需要复杂判断的 senior 岗位**——agent 能筛"有 X 年经验"但筛不出"文化契合"
@@ -180,7 +180,7 @@ Juicebox 这套范式的代价不是没有：
 
 ---
 
-## 🤔 我的几点判断
+## 我的几点判断
 
 !!! abstract "TL;DR"
     1. **3-approval 冷启动是被低估的好设计**——这套 preference elicitation 协议可借鉴到任何"长期 worker agent"，比让用户写"system prompt" 友好得多。
@@ -201,7 +201,7 @@ Juicebox 这套范式的代价不是没有：
 
 ---
 
-## 🔗 延伸阅读
+## 延伸阅读
 
 - [Juicebox Agents 2.0 公告](https://juicebox.ai/blog/agent-2-0) —— 最权威的产品视角
 - [Agent 文档（含状态机）](https://docs.juicebox.work/juicebox-agents) —— 6 状态 + lifecycle 的完整描述
