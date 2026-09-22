@@ -97,7 +97,7 @@ plugins:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/ihoooohi
+      link: https://ihoooohi.github.io
   generator: false
 
 extra_css:
