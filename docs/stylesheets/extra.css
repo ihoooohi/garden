@@ -1,10 +1,8 @@
-/* ZY's Garden — 暖纸质感 (warm paper texture) */
+/* ZY's Garden — warm paper, calm reading */
 
 :root {
-  --garden-radius: 0.55rem;
+  --garden-radius: 0.25rem;
   --garden-content-max: 44rem;
-  /* Paper grain (subtle SVG noise) */
-  --garden-paper-noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
 }
 
 /* ─── Light: cream / warm-gray paper ─── */
@@ -14,20 +12,17 @@
   --md-default-bg-color--lighter: #faf7f1;
   --md-default-bg-color--lightest: #fcfaf6;
 
-  /* Near-black with slight warmth */
   --md-default-fg-color: rgba(42, 34, 24, 0.92);
   --md-default-fg-color--light: rgba(72, 60, 44, 0.72);
   --md-default-fg-color--lighter: rgba(90, 76, 56, 0.48);
   --md-default-fg-color--lightest: rgba(110, 94, 70, 0.18);
 
-  /* Calm warm header (not loud brand paint) */
   --md-primary-fg-color: #3d3226;
   --md-primary-fg-color--light: #5a4a38;
   --md-primary-fg-color--dark: #2a2218;
   --md-primary-bg-color: #ebe4d6;
   --md-primary-bg-color--light: #f0eadc;
 
-  /* Amber/brown ink accent — restrained */
   --md-accent-fg-color: #9a6b2f;
   --md-accent-fg-color--transparent: rgba(154, 107, 47, 0.12);
   --md-accent-bg-color: #fff8ee;
@@ -45,12 +40,10 @@
   --md-footer-fg-color--light: rgba(61, 50, 38, 0.7);
   --md-footer-fg-color--lighter: rgba(61, 50, 38, 0.45);
 
-  --garden-card-border: rgba(120, 100, 70, 0.16);
-  --garden-card-hover-shadow: 0 0.35rem 1rem rgba(80, 55, 25, 0.08);
-  --garden-header-shadow: 0 0.05rem 0.35rem rgba(60, 45, 25, 0.07);
+  --garden-card-border: rgba(120, 100, 70, 0.14);
 }
 
-/* ─── Dark: warm dim lamp (warm charcoal, not OLED) ─── */
+/* ─── Dark: warm dim lamp ─── */
 [data-md-color-scheme="slate"] {
   --md-hue: 32;
 
@@ -85,28 +78,16 @@
   --md-footer-bg-color--dark: #12100c;
 
   --garden-card-border: rgba(200, 180, 140, 0.12);
-  --garden-card-hover-shadow: 0 0.35rem 1rem rgba(0, 0, 0, 0.35);
-  --garden-header-shadow: 0 0.05rem 0.4rem rgba(0, 0, 0, 0.4);
 }
 
-/* Soft paper grain on the page surface */
-body {
-  background-image: var(--garden-paper-noise);
-  background-attachment: fixed;
-}
-
-.md-main {
-  background-color: transparent;
-}
-
-/* Calmer header — blend with paper, less chrome weight */
+/* Header: solid warm paper, no frosted glass */
 .md-header {
-  box-shadow: var(--garden-header-shadow);
+  box-shadow: none;
+  border-bottom: 0.05rem solid var(--md-default-fg-color--lightest);
 }
 
 [data-md-color-scheme="default"] .md-header {
-  background-color: color-mix(in srgb, var(--md-primary-bg-color) 88%, transparent);
-  backdrop-filter: blur(8px);
+  background-color: var(--md-primary-bg-color);
   color: var(--md-primary-fg-color);
 }
 
@@ -121,11 +102,10 @@ body {
 }
 
 [data-md-color-scheme="slate"] .md-header {
-  background-color: color-mix(in srgb, var(--md-primary-bg-color) 92%, transparent);
-  backdrop-filter: blur(8px);
+  background-color: var(--md-primary-bg-color);
 }
 
-/* Readable Chinese: roomier leading + comfortable measure */
+/* Readable Chinese */
 .md-typeset {
   font-size: 0.8rem;
   line-height: 1.85;
@@ -148,41 +128,39 @@ body {
   max-width: var(--garden-content-max);
 }
 
-/* Links: ink accent, underline on hover */
 .md-typeset a:hover {
   color: var(--md-accent-fg-color);
 }
 
-/* Calm blockquotes */
+/* Quiet blockquotes */
 .md-typeset blockquote {
-  border-left-width: 0.18rem;
+  border-left-width: 0.15rem;
   border-left-color: var(--md-accent-fg-color);
-  border-radius: 0 0.3rem 0.3rem 0;
+  border-radius: 0;
   color: var(--md-default-fg-color--light);
-  padding: 0.4rem 0.95rem;
-  background: color-mix(in srgb, var(--md-accent-fg-color) 5%, transparent);
+  padding: 0.25rem 0.85rem;
+  background: transparent;
 }
 
-/* Soft card borders */
+/* Cards: flat, light border only — no lift / soft shadow */
 .md-typeset .grid.cards > ul > li,
 .md-typeset .grid.cards > ol > li,
 .md-typeset .grid > .card {
   border-radius: var(--garden-radius);
   border: 0.05rem solid var(--garden-card-border);
-  background-color: color-mix(in srgb, var(--md-default-bg-color--light) 70%, transparent);
+  background-color: transparent;
   box-shadow: none;
-  transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+  transition: border-color 0.15s ease;
 }
 
 .md-typeset .grid.cards > ul > li:hover,
 .md-typeset .grid.cards > ol > li:hover,
 .md-typeset .grid > .card:hover {
   border-color: var(--md-accent-fg-color);
-  box-shadow: var(--garden-card-hover-shadow);
-  transform: translateY(-1px);
+  box-shadow: none;
+  transform: none;
 }
 
-/* Admonitions / tabs / code: soft paper corners */
 .md-typeset .admonition,
 .md-typeset details {
   border-radius: var(--garden-radius);
@@ -207,7 +185,6 @@ body {
   border-top: 0.05rem solid var(--md-default-fg-color--lightest);
 }
 
-/* Footer quieter — stay on paper */
 .md-footer-meta {
   background-color: transparent;
 }
