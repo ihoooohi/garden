@@ -4,6 +4,6 @@ hide:
   - navigation
 ---
 
-# 🏷️ 标签索引
+# 标签索引
 
 [TAGS]

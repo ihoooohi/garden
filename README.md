@@ -1,8 +1,8 @@
-# ZY's Garden 🌱
+# ZY's Garden
 
 > 应灼灿的个人知识库 / 数字花园
 
-🌐 **在线访问**：https://ihoooohi.github.io/garden/
+**在线访问**：https://ihoooohi.github.io/garden/
 
 ## 这是什么
 
@@ -29,10 +29,11 @@ mkdocs serve
 ```
 docs/
 ├── index.md            # 首页
-├── reading/            # 📚 读文沉淀
-├── tech/               # 🛠️ 技术笔记
-├── thoughts/           # 💭 思考与随笔
-└── tags.md             # 🏷️ 标签索引
+├── reading/            # 读文沉淀
+├── tech/               # 技术笔记
+├── interview/          # 面试题集
+├── thoughts/           # 思考与随笔
+└── tags.md             # 标签索引
 ```
 
 ---
