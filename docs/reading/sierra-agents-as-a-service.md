@@ -21,7 +21,7 @@ tags:
 
 ---
 
-## 🎯 它在说什么
+## 它在说什么
 
 这篇 Bret Taylor 写的发布稿三个月酝酿，体量不大但密度极高。三件事：
 
@@ -33,7 +33,7 @@ tags:
 
 ---
 
-## 🧩 它本质上是什么？
+## 它本质上是什么？
 
 !!! tip "核心判断"
     **这不是产品发布，是 SaaS 形态级别的押注。Sierra 在自己产品上做的事情，等于宣告"未来所有 SaaS 都会经历这次 headless 化"——他们想做这次转型的第一个范本。**
@@ -52,7 +52,7 @@ Bret 的论点："软件可以构建并使用软件之后，UI 还有存在的�
 
 ---
 
-## 🏗️ 核心机制：Ghostwriter + Explorer + Agent Harness
+## 核心机制：Ghostwriter + Explorer + Agent Harness
 
 ```mermaid
 flowchart LR
@@ -84,7 +84,7 @@ flowchart LR
 
 ---
 
-## ⚙️ Agent 装配线：闭环才是真正的护城河
+## Agent 装配线：闭环才是真正的护城河
 
 Bret 用了一个比喻——"agent assembly line"：
 
@@ -100,7 +100,7 @@ Bret 用了一个比喻——"agent assembly line"：
 
 ---
 
-## ⚠️ 我看到的难点 / 局限
+## 我看到的难点 / 局限
 
 文章是发布稿，没讲坏话。但下面这些问题它绕开了：
 
@@ -122,15 +122,15 @@ Sierra 自己重写一遍可以——他们才 3 年。**Salesforce、Workday、
 
 ---
 
-## 🎯 什么场景适合 / 不适合
+## 什么场景适合 / 不适合
 
-### ✅ 这个范式真正成立的场景
+### 适合
 
 - **客户支持**——任务边界清晰、有大量历史对话作训练材料、错了能道歉重来
 - **流程自动化**——SOP 文档化程度高的领域（运营、HR onboarding、合规审查）
 - **新建 SaaS（greenfield）**——一开始就 headless 设计的产品，不用改造老代码
 
-### ❌ 这个范式短期不太成立的
+### 不太适合
 
 - **创意工具**（Figma、Notion 编辑视图）——人就是想"看到"和"调整"，no-clicks 反而是负价值
 - **重审计/合规链路**（医疗诊断、法务、税务）——"agent 直接做"很难拿到合规批准
@@ -138,7 +138,7 @@ Sierra 自己重写一遍可以——他们才 3 年。**Salesforce、Workday、
 
 ---
 
-## 🤔 我的几点判断
+## 我的几点判断
 
 !!! abstract "TL;DR"
     1. **Bret Taylor 是这个范式最有资格喊的人**——做过 Salesforce co-CEO，知道 SaaS UI 形态的天花板在哪
@@ -157,7 +157,7 @@ Sierra 自己重写一遍可以——他们才 3 年。**Salesforce、Workday、
 
 ---
 
-## 🔗 延伸阅读
+## 延伸阅读
 
 - [Sierra 官网](https://sierra.ai/) —— 看产品形态本身比看 blog 更有信息
 - [Bret Taylor 在 a16z 的访谈（agent infra）](https://a16z.com/podcast/bret-taylor-sierra/) —— 更细节的 agent harness 工程
