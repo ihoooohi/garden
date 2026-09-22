@@ -23,7 +23,7 @@ tags:
 
 ---
 
-## 🎯 它解决什么问题
+## 它解决什么问题
 
 让 coding agent 自己写代码、自己跑、自己迭代，是 2025 年下半年到 2026 年最大的工程范式变化。但这个范式有两个老毛病一直甩不掉：
 
@@ -38,7 +38,7 @@ Simon 这一章给的解法不是新工具不是新框架，而是 **prompt 里�
 
 ---
 
-## 🧩 它本质上是什么？
+## 它本质上是什么？
 
 !!! tip "核心判断"
     **Red/green TDD ≠ 新方法论 = 老 TDD 的 prompt 速记符。它的真正贡献不是"教 agent 做 TDD"，而是发现"模型已经被 TDD 文献喂饱了，给个暗号就行"。**
@@ -51,7 +51,7 @@ Simon 这一章给的解法不是新工具不是新框架，而是 **prompt 里�
 
 ---
 
-## 🏗️ 核心机制：一个 prompt 触发的内部循环
+## 核心机制：一个 prompt 触发的内部循环
 
 ```mermaid
 flowchart LR
@@ -82,7 +82,7 @@ First run the tests.
 
 ---
 
-## ⚠️ 难点 / 局限
+## 难点 / 局限
 
 1. **依赖测试可执行的环境。** 如果 agent 跑在没有 sandbox 的 chat-only 模式（比如 ChatGPT 普通对话），它没法真的执行测试，red/green 就退化成"模型自己脑补测试结果"——这就完全失效了。**Claude Code、Codex CLI、Cursor agent 这种能 spawn shell 的环境**才是它的真正归宿。
 
@@ -94,16 +94,16 @@ First run the tests.
 
 ---
 
-## 🎯 什么场景适合 / 不适合
+## 什么场景适合 / 不适合
 
-### ✅ 适合
+### 适合
 
 - **写纯函数 / 工具函数**——输入输出明确，测试天然能写。
 - **修 bug**——经典 TDD 流程：先写一个能复现 bug 的失败测试，再修代码让它通过，自带回归保护。
 - **用 Claude Code / Codex / Cursor agent 做迭代式编码**——这些环境能真跑测试。
 - **重构**——有现成测试套件做绿灯，重构时实时知道有没有改坏。
 
-### ❌ 不太适合
+### 不太适合
 
 - **chat-only 没法执行代码的环境**——red 阶段无法验证，只是表演。
 - **探索性编程 / 一次性脚本**——还没想清楚要什么的时候先写测试反而是束缚。
@@ -112,7 +112,7 @@ First run the tests.
 
 ---
 
-## 🤔 我的几点判断
+## 我的几点判断
 
 !!! abstract "TL;DR"
     1. **这是 2026 年最划算的 5 个字 prompt**——零成本、随手加、对纯函数任务效果立竿见影。
@@ -141,7 +141,7 @@ Simon 把这两章拆开是有意的。`Use red/green TDD` 让 agent 想做对�
 
 ---
 
-## 🔗 延伸阅读
+## 延伸阅读
 
 - [Agentic Engineering Patterns（系列首页）](https://simonwillison.net/guides/agentic-engineering-patterns/) —— Simon 把它打包成"指南"格式而不是单篇博客的尝试，本身值得读。
 - [Writing code is cheap now](https://simonwillison.net/guides/agentic-engineering-patterns/code-is-cheap/) —— 系列第一章，解释为什么 agentic engineering 会逼出新的开发哲学。
