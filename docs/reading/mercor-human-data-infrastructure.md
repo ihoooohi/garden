@@ -22,7 +22,7 @@ tags:
 
 ---
 
-## 🎯 它解决什么问题
+## 它解决什么问题
 
 过去两年所有人都在惊叹模型能力的飞跃，但有一个反差很少被点破：**模型变强了，企业的工作流根本没动**。Foundation model 像一群顶尖大学新人——智商够，但你扔进一家公司，没人 onboard、不懂工具、不懂"在我们这家公司什么叫做得好"，他们就是废的。
 
@@ -40,7 +40,7 @@ Mercor 的判断是：要把模型从"benchmark 高分"推到"在企业里干活
 
 ---
 
-## 🧩 它本质上是什么？
+## 它本质上是什么？
 
 !!! tip "核心判断"
     **Mercor ≠ AI 招聘平台 = 一个把"人类专业知识"做成可调度资源池的 vertical 数据基础设施。它在 AI 供应链上的位置类似于 AWS 在云计算供应链上的位置——往上走它做评测（APEX）反向定义模型能力，往下走它在做 enterprise agent 部署的 last mile。**
@@ -63,7 +63,7 @@ Mercor 的判断是：要把模型从"benchmark 高分"推到"在企业里干活
 
 ---
 
-## 🤖 Monty：每天 1 万场 15 分钟 AI 面试是怎么撑起来的
+## Monty：每天 1 万场 15 分钟 AI 面试是怎么撑起来的
 
 如果说 Mercor 是 AI 数据供应链的"漏斗"，**Monty 就是这个漏斗的入口阀门**。它是一个语音 AI 面试官，每 9 秒就有一个人开始一场面试，每场 15 分钟，每天 ~10,000 场，覆盖几百个职业类别。
 
@@ -128,7 +128,7 @@ Monty 不是"用 GPT 做面试"——是把每场对话当成 SaaS 服务的一�
 
 ---
 
-## 📊 APEX 评测体系：Mercor 反向参与了"模型能力"的定义
+## APEX 评测体系：Mercor 反向参与了"模型能力"的定义
 
 大多数 AI labs 的供应商只是"被使用"——给数据，模型公司用，模型公司打榜，供应商在场外鼓掌。Mercor 做了一件更聪明的事：**它自己出了一套 benchmark 体系，让模型公司在它定义的尺子上打榜**。
 
@@ -163,7 +163,7 @@ APEX-SWE 用了 Mercor 平台上的真实 SWE 制作 task：
 
 ---
 
-## 🔁 数据飞轮：1000 个专家任务把开源模型推上榜首
+## 数据飞轮：1000 个专家任务把开源模型推上榜首
 
 最有说服力的一篇是 2026-01 / 2026-02 那两篇 Applied Compute 合作博客。它把"高质量专家数据 → 模型表现"的因果做到了**线性可见**：
 
@@ -203,7 +203,7 @@ Mercor 把这个 thesis 公开发出来等于自我宣传：以后每家 lab 想
 
 ---
 
-## 🏗️ 反规模工程：从 $2M/月到 $2M/天，系统怎么不被压垮
+## 反规模工程：从 $2M/月到 $2M/天，系统怎么不被压垮
 
 Mercor 工程团队公开发了两篇相当硬核的 retrospective：**Contracts 服务一周重写**（2025-07，称作"John Wick"）和 **Payments 系统从 $2M/月到 $2M/天的演化**（2026-06）。两篇放在一起读特别有信息量——它们是两个不同维度的"反规模工程"。
 
@@ -250,7 +250,7 @@ Payments 这套问题不一样——**正确性不是"99.99%"是"100%"**。一�
 
 ---
 
-## ⚠️ 难点与局限
+## 难点与局限
 
 Mercor 的范式不是没代价：
 
@@ -263,15 +263,15 @@ Mercor 的范式不是没代价：
 
 ---
 
-## 🎯 什么场景适合复制 Mercor 的范式 / 什么不适合
+## 什么场景适合复制 Mercor 的范式 / 什么不适合
 
-### ✅ 适合借鉴
+### 适合借鉴
 
 - **任何要构建"专家任务市场"的 vertical**——医疗 RLHF、法律评测数据、金融 expert eval。Mercor 的 Monty + 聚类配置 + 主动 offer 模型可以原样搬
 - **2B Vertical SaaS 想转型卖"agent 数据"**——已经有 expert pool 的公司（Toptal、Upwork、SpecialistsClub）有结构性机会跟随
 - **任何要建 long-horizon trajectory 数据流水线的团队**——Mercor 公开的 1000 task → 双倍表现的工程链路（trajectory observability、per-run high-signal 测量、targeted ablation）可以直接抄
 
-### ❌ 不太适合
+### 不太适合
 
 - **通用知识标注（事实检查、文本分类）**——已经被 Scale / Surge / Labelbox / 各种众包平台填满，进去价格战
 - **没有"专家可识别"信号的领域**——Mercor 的护城河之一是 vetting（AI 面试 + 平台表现历史）。如果你的领域专家很难定义"对错"，模型很难从数据里学
@@ -280,7 +280,7 @@ Mercor 的范式不是没代价：
 
 ---
 
-## 🤔 我的几点判断
+## 我的几点判断
 
 !!! abstract "TL;DR"
     1. **"AI 招聘"是入口产品，"frontier model 数据供应链"才是真正的生意**——Mercor 的 ARR 从招聘费起步但绝大头来自 lab 的 expert hours。看待 Mercor 必须把这个表里不一拎清楚，否则估值结构理解偏差很大。
@@ -304,7 +304,7 @@ Mercor 的范式不是没代价：
 
 ---
 
-## 🔗 延伸阅读
+## 延伸阅读
 
 - [Organizing human intelligence to power the AI economy](https://www.mercor.com/blog/organizing-human-intelligence-to-power-the-ai-economy/) —— Mercor 自己的 thesis 文，最权威的"我们到底在做什么"
 - [Engineering Monty: Scaling an AI Interviewer](https://www.mercor.com/blog/monty-engineering-deep-dive/) —— 每天 1 万场 AI 面试的工程拆解
