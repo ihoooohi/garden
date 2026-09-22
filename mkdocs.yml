@@ -27,15 +27,15 @@ theme:
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: green
-      accent: light green
+      primary: slate
+      accent: amber
       toggle:
         icon: material/weather-sunny
         name: 切换到夜间模式
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: green
-      accent: light green
+      primary: black
+      accent: amber
       toggle:
         icon: material/weather-night
         name: 切换到日间模式
@@ -97,6 +97,9 @@ extra:
     - icon: fontawesome/brands/github
       link: https://github.com/ihoooohi
   generator: false
+
+extra_css:
+  - stylesheets/extra.css
 
 extra_javascript:
   - https://polyfill.io/v3/polyfill.min.js?features=es6

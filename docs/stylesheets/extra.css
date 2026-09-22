@@ -1,0 +1,96 @@
+/* ZY's Garden — focused theme polish (typography, cards, calm chrome) */
+
+:root {
+  --garden-radius: 0.5rem;
+  --garden-content-max: 46rem;
+}
+
+/* Softer header: less visual weight than default Material */
+.md-header {
+  box-shadow: 0 0.05rem 0.35rem rgba(0, 0, 0, 0.08);
+}
+
+[data-md-color-scheme="slate"] .md-header {
+  box-shadow: 0 0.05rem 0.35rem rgba(0, 0, 0, 0.35);
+}
+
+/* Readable Chinese body: slightly roomier line-height + content width */
+.md-typeset {
+  font-size: 0.78rem;
+  line-height: 1.75;
+}
+
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3 {
+  letter-spacing: -0.01em;
+  font-weight: 650;
+}
+
+.md-content__inner {
+  max-width: var(--garden-content-max);
+}
+
+/* Calm blockquotes — knowledge-garden tone */
+.md-typeset blockquote {
+  border-left-width: 0.18rem;
+  border-radius: 0 0.25rem 0.25rem 0;
+  color: var(--md-default-fg-color--light);
+  padding: 0.35rem 0.9rem;
+}
+
+/* Grid cards: softer edges + gentle lift */
+.md-typeset .grid.cards > ul > li,
+.md-typeset .grid.cards > ol > li,
+.md-typeset .grid > .card {
+  border-radius: var(--garden-radius);
+  border: 0.05rem solid var(--md-default-fg-color--lightest);
+  box-shadow: none;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+.md-typeset .grid.cards > ul > li:hover,
+.md-typeset .grid.cards > ol > li:hover,
+.md-typeset .grid > .card:hover {
+  border-color: var(--md-accent-fg-color);
+  box-shadow: 0 0.35rem 1rem rgba(0, 0, 0, 0.06);
+  transform: translateY(-1px);
+}
+
+[data-md-color-scheme="slate"] .md-typeset .grid.cards > ul > li:hover,
+[data-md-color-scheme="slate"] .md-typeset .grid.cards > ol > li:hover,
+[data-md-color-scheme="slate"] .md-typeset .grid > .card:hover {
+  box-shadow: 0 0.35rem 1rem rgba(0, 0, 0, 0.28);
+}
+
+/* Admonitions: match card radius */
+.md-typeset .admonition,
+.md-typeset details {
+  border-radius: var(--garden-radius);
+}
+
+/* Tabs & code blocks: slightly softer corners */
+.md-typeset .tabbed-set > .tabbed-content,
+.md-typeset pre > code {
+  border-radius: 0 0 var(--garden-radius) var(--garden-radius);
+}
+
+.md-typeset .highlight {
+  border-radius: var(--garden-radius);
+}
+
+/* Homepage: a bit more breathing room under the title */
+.md-typeset > h1:first-child {
+  margin-bottom: 0.6em;
+}
+
+.md-typeset hr {
+  margin: 2em 0;
+  border: none;
+  border-top: 0.05rem solid var(--md-default-fg-color--lightest);
+}
+
+/* Footer quieter */
+.md-footer-meta {
+  background-color: transparent;
+}
