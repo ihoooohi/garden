@@ -25,21 +25,19 @@ theme:
     - content.tabs.link
     - toc.follow
   palette:
-    # Warm paper: cream light surface + amber-brown ink accents
-    - media: "(prefers-color-scheme: light)"
-      scheme: default
+    # Default: warm cream paper (do not auto-follow OS dark mode)
+    - scheme: default
       primary: white
       accent: amber
       toggle:
-        icon: material/weather-sunny
+        icon: material/weather-night
         name: 切换到夜间模式
-    # Warm dim lamp (not OLED black)
-    - media: "(prefers-color-scheme: dark)"
-      scheme: slate
+    # Optional: warm dim lamp via toggle only
+    - scheme: slate
       primary: brown
       accent: amber
       toggle:
-        icon: material/weather-night
+        icon: material/weather-sunny
         name: 切换到日间模式
   font:
     text: Noto Sans SC
