@@ -10,7 +10,7 @@ tags:
   - 技术笔记
 ---
 
-# 🤖🤖 两个 Hermes 同居一台机
+# 两个 Hermes 同居一台机
 
 !!! quote "本文动机"
     我之前在 garden 写过两篇 Hermes：[架构图解](hermes-architecture.md) 讲整体设计，[团队部署推演](hermes-team-deployment.md) 讲多用户场景。这一篇补中间那块——**单用户但多个 Agent 身份**。起因很简单：我想让每天的 AI 简报推送看起来不是从 Hermes 主 bot 发的，而是有个专门的 NewsBot 在干这事。问 Hermes 自己怎么搞，它推荐了 profile 模式，半小时落地。这是事后的拆解笔记。
@@ -19,7 +19,7 @@ tags:
 
 ---
 
-## 🧭 从一个具体需求开始
+## 从一个具体需求开始
 
 我有一个 cron job 每天 21:00 跑——生成《每日 AI / Agent 行业新闻汇总》推到飞书。问题是：消息是从 **Hermes 主 bot** 发的，跟我日常聊天那个对话混在一起。每天定点跳出一坨简报，体验很奇怪——明明是订阅，却长得像 Hermes 主动 push。
 
@@ -33,7 +33,7 @@ tags:
 
 ---
 
-## 🎯 Profile 到底是什么
+## Profile 到底是什么
 
 Profile 就是 Hermes 提供的**轻量分身机制**：
 
@@ -58,7 +58,7 @@ hermes profile create newsbot --clone
 
 ---
 
-## 🏗️ 共享边界——哪些是共用的，哪些是隔离的
+## 共享边界——哪些是共用的，哪些是隔离的
 
 这是 profile 和"装第二份 Hermes"的核心区别。先看一张图：
 
@@ -128,7 +128,7 @@ flowchart TB
 
 ---
 
-## 🛠️ NewsBot 实战流水线
+## NewsBot 实战流水线
 
 下面是从「我有一对新飞书 app credentials」到「NewsBot 推送上线」的完整 6 步：
 
@@ -263,7 +263,7 @@ Gateways:
 
 ---
 
-## 💰 内存账：两个 Hermes 真实开销
+## 内存账：两个 Hermes 真实开销
 
 这是**最容易被忽略但最重要**的一个数字。Hermes 单 profile 启动时就要拉一个 lark-mcp（Node.js MCP server，用于飞书 OpenAPI），加上 Python 主进程本身：
 
@@ -285,7 +285,7 @@ Gateways:
 
 ---
 
-## ⚖️ 什么时候该装第二份 Hermes 而不是用 profile
+## 什么时候该装第二份 Hermes 而不是用 profile
 
 Profile 不是万能的。下面是**应该走"装第二份独立 Hermes"路线**的场景：
 
@@ -311,7 +311,7 @@ Profile 不是万能的。下面是**应该走"装第二份独立 Hermes"路线*
 
 ---
 
-## 🪤 几个值得记住的坑
+## 几个值得记住的坑
 
 ### 共享 GitHub 鉴权可能"超预期"
 
@@ -333,7 +333,7 @@ Profile 不是万能的。下面是**应该走"装第二份独立 Hermes"路线*
 
 ---
 
-## 🔭 我的整体判断
+## 我的整体判断
 
 Profile 这套设计在我看来是**"团队版 Hermes" 的第一步**。看 [团队部署推演](hermes-team-deployment.md) 那篇分析，要把 Hermes 真正搬给团队还要换 SQLite → Postgres、加身份系统、加任务调度器。但 profile 已经实现了**"一台机器多身份"**这个最基础的多租户原语——
 
@@ -347,7 +347,7 @@ Profile 这套设计在我看来是**"团队版 Hermes" 的第一步**。看 [�
 
 ---
 
-## 🔗 延伸阅读
+## 延伸阅读
 
 - [Hermes 架构图解 —— 一个会自己进化的 AI 助手](hermes-architecture.md) —— 整体架构（SOUL / 三层记忆 / Skills / Curator / GEPA / Profiles）
 - [如果 Hermes 给团队用——从 SQLite 到 Postgres 的架构推演](hermes-team-deployment.md) —— 单机 → 多用户的架构升级路径
