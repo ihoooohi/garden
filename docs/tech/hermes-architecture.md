@@ -10,7 +10,7 @@ tags:
   - 读文沉淀
 ---
 
-# 🏛️ Hermes Agent 架构图解
+# Hermes Agent 架构图解
 
 !!! quote "原文出处"
     **来源**：Akshay Pachaar（@akshay_pachaar）— *Hermes Agent Masterclass*（X Article, 2026-05-13, 2.2M 阅读）
@@ -21,7 +21,7 @@ tags:
 
 ---
 
-## 🧭 为什么重写这篇
+## 为什么重写这篇
 
 我之前在 garden 里写过一篇 Hermes 架构图解，是从 `~/.hermes/` 目录的物理结构入手，画 6 大类组件墙。那篇的问题在于：**只看到了"住在哪"，没看到"为什么这么设计"。**
 
@@ -38,7 +38,7 @@ tags:
 
 ---
 
-## 🎯 它到底解决什么问题
+## 它到底解决什么问题
 
 每一个你用过的 AI Agent 都有同一个毛病：**会话一关就什么都忘了。**
 
@@ -59,7 +59,7 @@ Hermes 的差异化在于它**自带一个学习闭环**：
 
 ---
 
-## 🏗️ 它怎么搭起来的
+## 它怎么搭起来的
 
 要理解后面的"学习闭环"，得先看 Hermes 的物理骨架。
 
@@ -114,7 +114,7 @@ graph TB
 
 ---
 
-## 👤 SOUL.md —— 记忆之前的"身份层"
+## SOUL.md —— 记忆之前的"身份层"
 
 读 Akshay 这篇之前，我以为 Hermes 的最上游是 `MEMORY.md` + `USER.md` 那两个文件。错了。**slot #1 是 SOUL.md**，比记忆更前面。
 
@@ -137,7 +137,7 @@ over politeness theater.
 
 ---
 
-## 🧠 三层记忆系统 —— 三种速度，三种用途
+## 三层记忆系统 —— 三种速度，三种用途
 
 Hermes 没有"一个记忆"，它有**三层**，各自服务不同的诉求。
 
@@ -193,7 +193,7 @@ graph LR
 
 ---
 
-## 🛠️ 自演化 Skills —— Agent 自己写自己的 playbook
+## 自演化 Skills —— Agent 自己写自己的 playbook
 
 Memory 管事实，**Skills 管步骤**——它是 Agent 的程序性记忆。
 
@@ -221,7 +221,7 @@ platforms: [linux, macos]
 - Pod stays Running with 0 restarts for 5+ minutes
 ```
 
-### 🪜 三级渐进式披露：让 token 成本不爆炸
+### 三级渐进式披露：让 token 成本不爆炸
 
 Skills 数量一上去（我现在有 87 个内置 + 10 几个自创），全塞进 system prompt 显然不现实。Hermes 的解法是**三级懒加载**：
 
@@ -241,7 +241,7 @@ graph LR
 
 **这个分层是 Skills 系统能 scale 到上百个的根本原因**——否则光 prompt context 就装不下。
 
-### 🔁 自演化的核心闭环
+### 自演化的核心闭环
 
 这是 Hermes 真正不一样的地方。**Agent 用 `skill_manage` 工具自己创建 Skill**，不需要你手写。触发条件：
 
@@ -274,7 +274,7 @@ graph LR
 
 > **我的批注：patch 的优先级很重要。** 一个我亲眼见过的反模式：Agent 用 edit 把一个 100 行 skill 整个重写，就为了改 1 行 pitfall——纯纯烧 token。Hermes 在系统 prompt 里**反复强调 patch 优先**，是因为它知道 Agent 默认偏好"完整重写"（更省脑子）。这是个工具链层面对 Agent 的纠偏。
 
-### 🧹 Curator —— Skills 的垃圾回收
+### Curator —— Skills 的垃圾回收
 
 不维护的话，Agent 自创的 Skills 会堆成一座山——**几十个窄而重叠的 playbook 互相吃 token、污染 catalog**。
 
@@ -302,7 +302,7 @@ Curator 是**后台维护进程**，但它不是 cron，是 **inactivity check**
 
 ---
 
-## 🧬 GEPA —— 离线进化优化器（这才是杀手锏）
+## GEPA —— 离线进化优化器（这才是杀手锏）
 
 Curator 解决了"清理"，但解决不了一个更根本的问题：**Agent 写的 Skill 真的好吗？**
 
@@ -349,7 +349,7 @@ graph TB
 
 ---
 
-## 🎭 Profiles —— 一台机器同时养多个 Agent
+## Profiles —— 一台机器同时养多个 Agent
 
 到这里整套架构（SOUL + Memory + Skills + Curator + GEPA）讲完了。但单个 Agent 玩到极致还是单个 Agent。**Hermes 真正"多就是好"的地方在 Profiles。**
 
@@ -378,7 +378,7 @@ Akshay 在原文里给了三个范例 SOUL：
 
 ---
 
-## 🔑 一句话总结这套架构
+## 一句话总结这套架构
 
 **SOUL 设定身份 → Runtime 捕获经验 → Curator 打扫库存 → GEPA 验证质量。**
 
@@ -408,7 +408,7 @@ graph LR
 
 ---
 
-## 🤔 我的几点判断
+## 我的几点判断
 
 !!! abstract "TL;DR"
     1. **Hermes 的护城河不是任何单点功能，是"自演化 + 多层记忆 + 离线优化"打包在一起。** 这三件事单独看都不算新，但开源界目前只有它一家整合。
@@ -429,7 +429,7 @@ graph LR
 
 ---
 
-## 🔗 延伸阅读
+## 延伸阅读
 
 - [Akshay Pachaar — Hermes Agent Masterclass](https://x.com/akshay_pachaar/status/2054564519280804028) —— 本文重写所基于的原文（X Article 形式，2.2M 阅读）
 - [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent) —— Hermes 主仓库（90K+ star）
