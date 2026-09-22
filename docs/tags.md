@@ -1,7 +1,7 @@
 ---
 title: 标签
 hide:
-  - navigation
+ - navigation
 ---
 
 # 标签索引
