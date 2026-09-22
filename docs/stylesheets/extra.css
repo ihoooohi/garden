@@ -3,6 +3,8 @@
 :root {
   --garden-radius: 0.25rem;
   --garden-content-max: 44rem;
+  /* Subtle paper grain */
+  --garden-paper-noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
 }
 
 /* ─── Light: cream / warm-gray paper ─── */
@@ -78,6 +80,18 @@
   --md-footer-bg-color--dark: #12100c;
 
   --garden-card-border: rgba(200, 180, 140, 0.12);
+}
+
+
+
+/* Soft paper grain on the page surface */
+body {
+  background-image: var(--garden-paper-noise);
+  background-attachment: fixed;
+}
+
+.md-main {
+  background-color: transparent;
 }
 
 /* Header: solid warm paper, no frosted glass */
