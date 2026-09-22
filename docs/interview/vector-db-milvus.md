@@ -24,7 +24,7 @@ icon: material/database-search
 
 ---
 
-## 🎯 这篇为什么值得收藏
+## 这篇为什么值得收藏
 
 前两篇面试题（[TrustZone 全景图](ai-agent-interview-tour.md) / [字节高可用](agent-service-reliability.md)）是 Agent 应用层的，**这篇是往下挖一层——RAG 的存储底座**。
 
@@ -42,7 +42,7 @@ icon: material/database-search
 
 ---
 
-## 🧩 它本质上是在测什么？
+## 它本质上是在测什么？
 
 !!! tip "核心判断"
     **这道题的真正考点不是 Milvus 知识，是「你有没有见过百万级向量的真实重力」。** 数据量从几万到几百万，是质变不是量变——内存模型、索引算法、写入策略全部需要重新考虑。
@@ -60,7 +60,7 @@ icon: material/database-search
 
 ---
 
-## 🏗️ 完整骨架：从问题到答案的全图
+## 完整骨架：从问题到答案的全图
 
 ```mermaid
 flowchart TB
@@ -88,7 +88,7 @@ flowchart TB
 
 ---
 
-## 1️⃣ 选型这一步：为什么是 Milvus { #pick-milvus }
+## 1 选型这一步：为什么是 Milvus { #pick-milvus }
 
 !!! abstract "速记表"
     | 库 | 适合 | 不适合 |
@@ -107,7 +107,7 @@ flowchart TB
 
 ---
 
-## 2️⃣ 数据规模 + 性能数字：必须报出来 { #data-and-perf }
+## 2 数据规模 + 性能数字：必须报出来 { #data-and-perf }
 
 ```mermaid
 graph LR
@@ -141,7 +141,7 @@ graph LR
 
 ---
 
-## 3️⃣ HNSW 三个参数：用社交网络类比记住 { #hnsw-params }
+## 3 HNSW 三个参数：用社交网络类比记住 { #hnsw-params }
 
 HNSW（Hierarchical Navigable Small World）是当前向量检索的事实标准。三个参数面试常问：
 
@@ -162,11 +162,11 @@ HNSW（Hierarchical Navigable Small World）是当前向量检索的事实标准
 
 ---
 
-## 4️⃣ 两个真实瓶颈 + 解法（重头戏） { #pitfalls }
+## 4 两个真实瓶颈 + 解法（重头戏） { #pitfalls }
 
 这部分是面试官最想听的——**你真的踩过坑**。
 
-### 🔥 瓶颈一：内存不够 → swap → 延迟飙到秒级
+### 瓶颈一：内存不够 → swap → 延迟飙到秒级
 
 **症状**：查询延迟从 20ms 突然飙到 2s+，CPU 不忙、网络不忙，但磁盘 IO 很高。
 
@@ -187,7 +187,7 @@ float32 (4 字节) → int8 (1 字节)
 
 **这是性价比最高的优化**。几乎没代价就把内存砍到 1/4。
 
-### 🔥 瓶颈二：批量写入 → Segment 合并 → P99 抖动
+### 瓶颈二：批量写入 → Segment 合并 → P99 抖动
 
 **症状**：白天平稳的 P99 60ms，晚上跑批量更新时 P99 飙到 300ms+，几小时后又恢复。
 
@@ -218,7 +218,7 @@ flowchart LR
 
 ---
 
-## 5️⃣ 60 秒答题模板（背下来直接抄） { #template }
+## 5 60 秒答题模板（背下来直接抄） { #template }
 
 面试里听到这道三连击，按这个骨架走，3 段话拿下：
 
@@ -243,7 +243,7 @@ flowchart LR
 
 ---
 
-## 🪤 我自己读完的几点批注
+## 我自己读完的几点批注
 
 ### 批注一：这篇文章的「叙事手法」值得偷
 
@@ -287,7 +287,7 @@ flowchart LR
 
 ---
 
-## 🔭 我的判断
+## 我的判断
 
 这道题本质上是 **AI Agent 时代版本的「你的 MySQL 是怎么调优的」**——
 
@@ -300,7 +300,7 @@ flowchart LR
 
 ---
 
-## 📚 延伸阅读
+## 延伸阅读
 
 - 同系列前两篇：
     - [TrustZone 版 Agent 面试题全景](ai-agent-interview-tour.md)
