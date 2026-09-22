@@ -83,7 +83,7 @@ flowchart LR
 
 ---
 
-## A. Trust scoring 自我修正 — ⚠️ 半成立
+## A. Trust scoring 自我修正 — 半成立
 
 设计：8 对真/假 fact 同时灌入 fact_store，5 轮 `record_feedback(helpful=True/False)` 之后看 `search` 默认 `min_trust=0.3` 是否能"真留假删"。
 
@@ -115,7 +115,7 @@ flowchart LR
 
 ---
 
-## B. 速度 — ✅ 完全成立
+## B. 速度 — 完全成立
 
 | 指标 | 数值 |
 |---|---|
@@ -134,7 +134,7 @@ flowchart LR
 
 ---
 
-## C. 召回质量 — ❌ 默认 Hybrid 反而更差
+## C. 召回质量 — 默认 Hybrid 反而更差
 
 设计：用 31 条真实 fact + 12 条真实 query（来自我自己的 hermes 使用场景），对比两种配置：
 
@@ -144,14 +144,14 @@ flowchart LR
 ### 中文结果
 
 | 配置 | avg P | avg R | avg F1 |
-|---|---|---|---|
+|---|---|---|
 | Hybrid (默认) | 0.292 | 0.292 | **0.32** |
 | 纯 FTS5 | 0.375 | 0.375 | **0.375** |
 
 ### 英文结果
 
 | 配置 | avg P | avg R | avg F1 |
-|---|---|---|---|
+|---|---|---|
 | Hybrid (默认) | 0.167 | 0.167 | **0.167** |
 | 纯 FTS5 | 0.167 | 0.167 | **0.167** |
 
@@ -166,7 +166,7 @@ flowchart LR
 
 ---
 
-## D. HRR 代数 — ❌ 文档宣称的 unique capabilities 都不工作
+## D. HRR 代数 — 文档宣称的 unique capabilities 都不工作
 
 这是 Holographic 在官方文档里被列为 "Unique capabilities" 的三个 action：
 
@@ -255,7 +255,7 @@ xychart-beta
 回到最开始的 6 个卖点：
 
 | # | 卖点 | 实测 | 评价 |
-|---|---|---|---|
+|---|---|---|
 | 1 | 零依赖 (pure SQLite) | ✅ 完全成立 | 真的零外部依赖 |
 | 2 | Sub-millisecond 检索 | ✅ 完全成立 | 0.04-0.06ms 实锤 |
 | 3 | Trust scoring 自我修正 | ⚠️ 部分成立 | 50-75% 成功率，受限 FTS5 召回 |
