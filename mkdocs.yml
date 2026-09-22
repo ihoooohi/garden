@@ -136,7 +136,7 @@ nav:
       - tech/web-scraping-toolchain.md
   - 面试题集:
       - interview/index.md
-      - interview/ai-agent-interview-fund.md
+      - interview/ai-agent-interview-tour.md
       - interview/agent-service-reliability.md
       - interview/vector-db-milvus.md
       - interview/sft-data-quality-system.md
